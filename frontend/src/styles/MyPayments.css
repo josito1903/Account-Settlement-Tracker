@@ -1,0 +1,350 @@
+.my-payments-page {
+    width: 100%;
+    max-width: 1250px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+
+/* ================= HEADER ================= */
+
+.my-payments-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.payments-eyebrow {
+    display: block;
+    color: #2864e8;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.my-payments-header h1 {
+    margin: 5px 0;
+    font-size: 34px;
+    color: #111827;
+}
+
+.my-payments-header p {
+    margin: 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.payments-refresh-btn {
+    border: 1px solid #d9e0eb;
+    background: #ffffff;
+    color: #2864e8;
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.payments-refresh-btn:hover {
+    background: #f4f7ff;
+}
+
+.payments-refresh-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+/* ================= ERROR ================= */
+
+.my-payments-error {
+    background: #fff0f0;
+    border: 1px solid #ffd0d0;
+    color: #c62828;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 13px;
+}
+
+
+/* ================= SUMMARY ================= */
+
+.payments-summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 22px;
+}
+
+.payment-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 20px;
+    background: #ffffff;
+    border: 1px solid #edf0f5;
+    border-radius: 14px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+.payment-summary-icon {
+    width: 46px;
+    height: 46px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.payment-summary-icon.blue {
+    background: #eef4ff;
+    color: #2864e8;
+}
+
+.payment-summary-icon.green {
+    background: #e8f8ef;
+    color: #178347;
+}
+
+.payment-summary-icon.orange {
+    background: #fff4df;
+    color: #b66e00;
+}
+
+.payment-summary-card span {
+    display: block;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+.payment-summary-card strong {
+    display: block;
+    margin-top: 4px;
+    color: #111827;
+    font-size: 23px;
+}
+
+.payment-summary-card small {
+    display: block;
+    margin-top: 3px;
+    color: #9aa2ae;
+    font-size: 10px;
+}
+
+.latest-method {
+    font-size: 18px !important;
+}
+
+
+/* ================= HISTORY ================= */
+
+.payments-history-card {
+    background: #ffffff;
+    border: 1px solid #edf0f5;
+    border-radius: 14px;
+    padding: 22px;
+    box-shadow: 0 5px 18px rgba(0, 0, 0, 0.05);
+}
+
+.payments-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.payments-history-header h2 {
+    margin: 5px 0 0;
+    color: #111827;
+    font-size: 21px;
+}
+
+.payments-count {
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #eef4ff;
+    color: #2864e8;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+
+/* ================= TABLE ================= */
+
+.payments-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.my-payments-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.my-payments-table th {
+    padding: 13px 10px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    color: #6b7280;
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.my-payments-table td {
+    padding: 15px 10px;
+    border-bottom: 1px solid #f0f1f3;
+    color: #374151;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.my-payments-table tbody tr:hover {
+    background: #fafbfc;
+}
+
+
+/* ================= INVOICE ================= */
+
+.invoice-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.invoice-icon {
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 9px;
+    background: #eef4ff;
+}
+
+.invoice-cell strong {
+    display: block;
+    color: #1f2937;
+    font-size: 13px;
+}
+
+.invoice-cell span {
+    display: block;
+    margin-top: 2px;
+    color: #9aa2ae;
+    font-size: 10px;
+}
+
+.amount-green {
+    color: #178347 !important;
+    font-size: 14px !important;
+}
+
+.method-badge {
+    display: inline-block;
+    padding: 6px 10px;
+    border-radius: 7px;
+    background: #f3f6fb;
+    color: #4b5563;
+    font-size: 10px;
+    font-weight: 600;
+}
+
+.transaction-id {
+    color: #6b7280;
+    font-size: 11px;
+}
+
+
+/* ================= EMPTY ================= */
+
+.payments-empty-state {
+    text-align: center;
+    padding: 55px 20px;
+    color: #6b7280;
+}
+
+.payments-empty-state h3 {
+    margin: 12px 0 5px;
+    color: #111827;
+}
+
+.payments-empty-state p {
+    max-width: 500px;
+    margin: 0 auto;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.payments-empty-icon {
+    width: 62px;
+    height: 62px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #eef4ff;
+    font-size: 25px;
+}
+
+.payment-spinner {
+    width: 30px;
+    height: 30px;
+    margin: 0 auto 14px;
+    border: 3px solid #e5e7eb;
+    border-top-color: #2864e8;
+    border-radius: 50%;
+    animation: paymentSpin 0.8s linear infinite;
+}
+
+@keyframes paymentSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* ================= RESPONSIVE ================= */
+
+@media (max-width: 900px) {
+    .payments-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .my-payments-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .my-payments-header h1 {
+        font-size: 28px;
+    }
+    .payments-summary {
+        grid-template-columns: 1fr;
+    }
+    .payments-history-card {
+        padding: 18px;
+    }
+    .payments-history-header {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .my-payments-header h1 {
+        font-size: 25px;
+    }
+    .payments-history-card {
+        padding: 15px;
+    }
+}

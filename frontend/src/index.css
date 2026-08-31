@@ -1,0 +1,655 @@
+/* =========================================================
+   ACCOUNT SETTLEMENT TRACKER
+   GLOBAL THEME + LAYOUT
+========================================================= */
+
+
+/* =========================================================
+   LIGHT THEME
+========================================================= */
+
+:root {
+    --text: #4f5868;
+    --text-h: #111827;
+    --bg: #f6f8fc;
+    --surface: #ffffff;
+    --surface-2: #f8fafc;
+    --surface-hover: #f4f7fb;
+    --border: #e5e7eb;
+    --border-strong: #d8dee8;
+    --code-bg: #f4f3ec;
+    --accent: #2864e8;
+    --accent-hover: #2058d0;
+    --accent-light: #eef4ff;
+    --accent-border: #cddcff;
+    --success: #178347;
+    --success-bg: #e8f8ef;
+    --warning: #b66e00;
+    --warning-bg: #fff4df;
+    --danger: #c62828;
+    --danger-bg: #fff0f0;
+    --purple: #6842c2;
+    --purple-bg: #f2edff;
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    --sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --heading: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    font: 16px/1.45 var(--sans);
+    letter-spacing: 0.18px;
+    color: var(--text);
+    background: var(--bg);
+    color-scheme: light;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+
+/* =========================================================
+   DARK THEME
+========================================================= */
+
+html[data-theme="dark"] {
+    --text: #cbd5e1;
+    --text-h: #f8fafc;
+    --bg: #0f172a;
+    --surface: #111827;
+    --surface-2: #1e293b;
+    --surface-hover: #263449;
+    --border: #334155;
+    --border-strong: #475569;
+    --code-bg: #1e293b;
+    --accent: #60a5fa;
+    --accent-hover: #3b82f6;
+    --accent-light: rgba(96, 165, 250, 0.12);
+    --accent-border: rgba(96, 165, 250, 0.35);
+    --success: #34d399;
+    --success-bg: rgba(52, 211, 153, 0.12);
+    --warning: #fbbf24;
+    --warning-bg: rgba(251, 191, 36, 0.12);
+    --danger: #f87171;
+    --danger-bg: rgba(248, 113, 113, 0.12);
+    --purple: #a78bfa;
+    --purple-bg: rgba(167, 139, 250, 0.12);
+    --shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    color-scheme: dark;
+}
+
+
+/* =========================================================
+   SYSTEM THEME
+   Uses OS/browser preference
+========================================================= */
+
+@media (prefers-color-scheme: dark) {
+    html[data-theme="system"] {
+        --text: #cbd5e1;
+        --text-h: #f8fafc;
+        --bg: #0f172a;
+        --surface: #111827;
+        --surface-2: #1e293b;
+        --surface-hover: #263449;
+        --border: #334155;
+        --border-strong: #475569;
+        --code-bg: #1e293b;
+        --accent: #60a5fa;
+        --accent-hover: #3b82f6;
+        --accent-light: rgba(96, 165, 250, 0.12);
+        --accent-border: rgba(96, 165, 250, 0.35);
+        --success: #34d399;
+        --success-bg: rgba(52, 211, 153, 0.12);
+        --warning: #fbbf24;
+        --warning-bg: rgba(251, 191, 36, 0.12);
+        --danger: #f87171;
+        --danger-bg: rgba(248, 113, 113, 0.12);
+        --purple: #a78bfa;
+        --purple-bg: rgba(167, 139, 250, 0.12);
+        --shadow: 0 8px 25px rgba(0, 0, 0, 0.25);
+    }
+}
+
+
+/* =========================================================
+   HTML
+========================================================= */
+
+html {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background: var(--bg);
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: inherit;
+}
+
+
+/* =========================================================
+   BODY
+========================================================= */
+
+body {
+    width: 100%;
+    min-width: 320px;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+
+/* =========================================================
+   ROOT
+========================================================= */
+
+#root {
+    width: 100%;
+    max-width: none;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+    text-align: left;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   APP LAYOUT
+========================================================= */
+
+.app-layout {
+    width: 100%;
+    min-height: 100vh;
+    display: flex;
+    background: var(--bg);
+    transition: background-color 0.25s ease;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+    width: calc(100% - 250px);
+    min-width: 0;
+    min-height: 100vh;
+    margin-left: 250px;
+    box-sizing: border-box;
+    background: var(--bg);
+    transition: margin-left 0.25s ease, width 0.25s ease, background-color 0.25s ease;
+}
+
+
+/* =========================================================
+   PAGE CONTENT
+========================================================= */
+
+.page-content {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   TYPOGRAPHY
+========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: var(--heading);
+    color: var(--text-h);
+    font-weight: 600;
+    margin-top: 0;
+    transition: color 0.25s ease;
+}
+
+h1 {
+    font-size: 36px;
+    line-height: 1.15;
+    letter-spacing: -1px;
+    margin-bottom: 12px;
+}
+
+h2 {
+    font-size: 24px;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    margin-bottom: 8px;
+}
+
+h3 {
+    font-size: 18px;
+    line-height: 1.25;
+    margin-bottom: 6px;
+}
+
+p {
+    margin: 0 0 10px;
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   LINKS
+========================================================= */
+
+a {
+    color: inherit;
+}
+
+
+/* =========================================================
+   FORM ELEMENTS
+========================================================= */
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+input,
+select,
+textarea {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   GLOBAL FORM THEME
+========================================================= */
+
+input,
+select,
+textarea {
+    background: var(--surface);
+    color: var(--text-h);
+    border-color: var(--border-strong);
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: #8a93a2;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix( in srgb, var(--accent) 12%, transparent);
+}
+
+
+/* =========================================================
+   TABLES
+========================================================= */
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    color: var(--text);
+    border-color: var(--border);
+}
+
+td {
+    color: var(--text);
+    border-color: var(--border);
+}
+
+tbody tr:hover {
+    background: var(--surface-hover);
+}
+
+
+/* =========================================================
+   IMAGES / SVG
+========================================================= */
+
+img,
+svg {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   CODE
+========================================================= */
+
+code,
+.counter {
+    font-family: var(--mono);
+    display: inline-flex;
+    border-radius: 4px;
+    color: var(--text-h);
+}
+
+code {
+    font-size: 14px;
+    line-height: 1.35;
+    padding: 4px 8px;
+    background: var(--code-bg);
+}
+
+
+/* =========================================================
+   UTILITIES
+========================================================= */
+
+.text-muted {
+    color: #8a93a2;
+}
+
+.text-success {
+    color: var(--success);
+}
+
+.text-warning {
+    color: var(--warning);
+}
+
+.text-danger {
+    color: var(--danger);
+}
+
+.bg-white {
+    background: var(--surface);
+}
+
+
+/* =========================================================
+   GLOBAL SURFACE OVERRIDES
+   Makes existing pages respond to theme.
+========================================================= */
+
+.card,
+.panel,
+.section,
+.surface,
+.modal,
+.dropdown,
+.settings-card,
+.settings-account-card,
+.customer-summary-card,
+.customer-overview-card,
+.customer-form-card,
+.customer-list-card,
+.vendor-summary-card,
+.vendor-overview-card,
+.vendor-form-card,
+.vendor-list-card,
+.invoice-summary-card,
+.invoice-overview-card,
+.invoice-form-card,
+.invoice-list-card,
+.payment-summary-card,
+.payments-history-card,
+.report-kpi-card,
+.report-section,
+.overview-card,
+.users-table-card,
+.user-form-card {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+    transition: background-color 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+
+
+/* =========================================================
+   COMMON DARK MODE COMPONENT OVERRIDES
+========================================================= */
+
+
+/* Sidebar */
+
+html[data-theme="dark"] .sidebar,
+html[data-theme="dark"] .sidebar-brand,
+html[data-theme="dark"] .sidebar-user {
+    background: #0b1220;
+    border-color: var(--border);
+}
+
+
+/* Navbar */
+
+html[data-theme="dark"] .navbar {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+
+/* =========================================================
+   DARK MODE FOR HARDCODED WHITE CARDS
+========================================================= */
+
+html[data-theme="dark"] .card,
+html[data-theme="dark"] .panel,
+html[data-theme="dark"] .section,
+html[data-theme="dark"] .surface,
+html[data-theme="dark"] .modal,
+html[data-theme="dark"] .dropdown,
+html[data-theme="dark"] .settings-card,
+html[data-theme="dark"] .settings-account-card,
+html[data-theme="dark"] .customer-summary-card,
+html[data-theme="dark"] .customer-overview-card,
+html[data-theme="dark"] .customer-form-card,
+html[data-theme="dark"] .customer-list-card,
+html[data-theme="dark"] .vendor-summary-card,
+html[data-theme="dark"] .vendor-overview-card,
+html[data-theme="dark"] .vendor-form-card,
+html[data-theme="dark"] .vendor-list-card,
+html[data-theme="dark"] .invoice-summary-card,
+html[data-theme="dark"] .invoice-overview-card,
+html[data-theme="dark"] .invoice-form-card,
+html[data-theme="dark"] .invoice-list-card,
+html[data-theme="dark"] .payment-summary-card,
+html[data-theme="dark"] .payments-history-card,
+html[data-theme="dark"] .report-kpi-card,
+html[data-theme="dark"] .report-section,
+html[data-theme="dark"] .overview-card,
+html[data-theme="dark"] .users-table-card,
+html[data-theme="dark"] .user-form-card {
+    background: var(--surface);
+    border-color: var(--border);
+    color: var(--text);
+}
+
+
+/* =========================================================
+   DARK MODE BUTTONS
+========================================================= */
+
+html[data-theme="dark"] .secondary-action,
+html[data-theme="dark"] .refresh-button,
+html[data-theme="dark"] .refresh-invoice-btn,
+html[data-theme="dark"] .customer-refresh-btn {
+    background: var(--surface-2);
+    color: var(--accent);
+    border-color: var(--border-strong);
+}
+
+html[data-theme="dark"] .secondary-action:hover,
+html[data-theme="dark"] .refresh-button:hover,
+html[data-theme="dark"] .refresh-invoice-btn:hover,
+html[data-theme="dark"] .customer-refresh-btn:hover {
+    background: var(--surface-hover);
+}
+
+
+/* =========================================================
+   DARK MODE TEXT
+========================================================= */
+
+html[data-theme="dark"] .customer-main-cell strong,
+html[data-theme="dark"] .vendor-main-cell strong,
+html[data-theme="dark"] .invoice-main-cell strong,
+html[data-theme="dark"] .user-cell strong,
+html[data-theme="dark"] .settings-account-info h2 {
+    color: var(--text-h);
+}
+
+
+/* =========================================================
+   DARK MODE TABLES
+========================================================= */
+
+html[data-theme="dark"] table th {
+    color: #94a3b8;
+    border-bottom-color: var(--border);
+}
+
+html[data-theme="dark"] table td {
+    color: #cbd5e1;
+    border-bottom-color: #253247;
+}
+
+html[data-theme="dark"] table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.025);
+}
+
+
+/* =========================================================
+   DARK MODE INPUTS
+========================================================= */
+
+html[data-theme="dark"] input,
+html[data-theme="dark"] select,
+html[data-theme="dark"] textarea {
+    background: #0f172a;
+    color: #e5e7eb;
+    border-color: var(--border-strong);
+}
+
+html[data-theme="dark"] input::placeholder,
+html[data-theme="dark"] textarea::placeholder {
+    color: #64748b;
+}
+
+
+/* =========================================================
+   DARK MODE BADGES
+========================================================= */
+
+html[data-theme="dark"] .status-badge.active,
+html[data-theme="dark"] .customer-status.active,
+html[data-theme="dark"] .account-status.active,
+html[data-theme="dark"] .secure-badge {
+    background: var(--success-bg);
+    color: var(--success);
+}
+
+html[data-theme="dark"] .status-badge.inactive,
+html[data-theme="dark"] .customer-status.inactive,
+html[data-theme="dark"] .account-status.inactive {
+    background: var(--danger-bg);
+    color: var(--danger);
+}
+
+html[data-theme="dark"] .invoice-status.partial {
+    background: var(--warning-bg);
+    color: var(--warning);
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+     :root {
+        font-size: 15px;
+    }
+    .main-content {
+        width: calc(100% - 220px);
+        margin-left: 220px;
+    }
+    .page-content {
+        padding: 20px;
+    }
+    h1 {
+        font-size: 32px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 700px) {
+     :root {
+        font-size: 14px;
+    }
+    .main-content {
+        width: calc(100% - 72px);
+        margin-left: 72px;
+    }
+    .page-content {
+        padding: 18px;
+    }
+    h1 {
+        font-size: 28px;
+    }
+    h2 {
+        font-size: 21px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+    .main-content {
+        width: calc(100% - 72px);
+        margin-left: 72px;
+    }
+    .page-content {
+        padding: 14px;
+    }
+    h1 {
+        font-size: 25px;
+    }
+    h2 {
+        font-size: 20px;
+    }
+}
+
+@keyframes dashboardSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
