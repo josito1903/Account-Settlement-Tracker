@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMySettlements } from "../../API/settlementApi";
+import { getMySettlements } from "../../API/settlementAPi";
 import "../../styles/Settlement.css";
 
 function MySettlements() {
