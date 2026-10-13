@@ -5,7 +5,7 @@ import {
   createSettlement,
   updateSettlement,
   deleteSettlement,
-} from "../../API/settlementApi";
+} from "../../API/settlementAPi";
 
 import { getInvoices } from "../../API/invoiceAPi";
 

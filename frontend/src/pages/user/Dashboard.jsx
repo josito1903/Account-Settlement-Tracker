@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import { getMyInvoices } from "../../API/invoiceAPi";
 import { getMyPayments } from "../../API/paymentAPi";
-import { getMySettlements } from "../../API/settlementApi";
+import { getMySettlements } from "../../API/settlementAPi";
 
 
 function Dashboard() {
