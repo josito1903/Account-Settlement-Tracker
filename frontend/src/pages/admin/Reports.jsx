@@ -6,7 +6,7 @@ import {
   getCustomerReport,
   getVendorReport,
   getSettlementReport,
-} from "../../API/reportApi";
+} from "../../API/reportAPi";
 
 import "../../styles/Reports.css";
 
