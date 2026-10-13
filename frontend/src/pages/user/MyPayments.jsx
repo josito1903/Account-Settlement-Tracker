@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getMyPayments } from "../../API/paymentApi";
+import { getMyPayments } from "../../API/paymentAPi";
 
 import "../../styles/MyPayments.css";
 

@@ -6,7 +6,7 @@ import {
   createCustomer,
   updateCustomer,
   deleteCustomer,
-} from "../../API/customerApi";
+} from "../../API/customerAPi";
 
 import "../../styles/Layout.css";
 import "../../styles/Customers.css";

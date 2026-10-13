@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { getMyInvoices } from "../../API/invoiceApi";
-import { getMyPayments } from "../../API/paymentApi";
+import { getMyInvoices } from "../../API/invoiceAPi";
+import { getMyPayments } from "../../API/paymentAPi";
 import { getMySettlements } from "../../API/settlementApi";
 
 

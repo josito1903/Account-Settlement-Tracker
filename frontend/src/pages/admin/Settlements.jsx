@@ -7,7 +7,7 @@ import {
   deleteSettlement,
 } from "../../API/settlementApi";
 
-import { getInvoices } from "../../API/invoiceApi";
+import { getInvoices } from "../../API/invoiceAPi";
 
 import "../../styles/Layout.css";
 import "../../styles/Settlements.css";

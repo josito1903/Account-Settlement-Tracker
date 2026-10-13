@@ -6,11 +6,11 @@ import {
   createInvoice,
   updateInvoice,
   deleteInvoice,
-} from "../../API/invoiceApi";
+} from "../../API/invoiceAPi";
 
-import { getCustomers } from "../../API/customerApi";
-import { getVendors } from "../../API/vendorApi";
-import { getUsers } from "../../API/userApi";
+import { getCustomers } from "../../API/customerAPi";
+import { getVendors } from "../../API/vendorAPI";
+import { getUsers } from "../../API/userAPi";
 
 import "../../styles/Invoices.css";
 

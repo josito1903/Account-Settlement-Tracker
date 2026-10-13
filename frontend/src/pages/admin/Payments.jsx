@@ -6,9 +6,9 @@ import {
   createPayment,
   updatePayment,
   deletePayment,
-} from "../../API/paymentApi";
+} from "../../API/paymentAPi";
 
-import { getInvoices } from "../../API/invoiceApi";
+import { getInvoices } from "../../API/invoiceAPi";
 
 import "../../styles/Layout.css";
 import "../../styles/Payments.css";

@@ -5,7 +5,7 @@ import {
   createVendor,
   updateVendor,
   deleteVendor,
-} from "../../API/vendorApi";
+} from "../../API/vendorAPI";
 
 import "../../styles/Layout.css";
 import "../../styles/Vendors.css";
