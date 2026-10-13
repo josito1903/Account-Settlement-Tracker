@@ -1,396 +1,1950 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+
 import { getMyProfile } from "../../API/userApi";
 import { useAuth } from "../../context/AuthContext";
+import i18n from "../../i18n";
+
+import "../../styles/AdminSettings.css";
 
 function Settings() {
   const navigate = useNavigate();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+  const { t } = useTranslation();
 
-  const [profile, setProfile] = useState(null);
-  const [notifications, setNotifications] = useState(
-    localStorage.getItem("notifications") !== "false"
+  // =====================================================
+  // SUPPORTED LANGUAGES
+  // =====================================================
+
+  const languages = [
+    {
+      code: "en",
+      flag: "🇬🇧",
+      label: "English",
+    },
+    {
+      code: "fr",
+      flag: "🇫🇷",
+      label: "Français",
+    },
+    {
+      code: "es",
+      flag: "🇪🇸",
+      label: "Español",
+    },
+    {
+      code: "pt",
+      flag: "🇵🇹",
+      label: "Português",
+    },
+    {
+      code: "zh",
+      flag: "🇨🇳",
+      label: "中文",
+    },
+  ];
+
+  // =====================================================
+  // PROFILE
+  // =====================================================
+
+  const [profile, setProfile] = useState(
+    user || null
   );
 
-  const [saved, setSaved] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] =
+    useState(true);
+
+  // =====================================================
+  // LANGUAGE
+  // =====================================================
+
+  const [language, setLanguage] = useState(
+    () =>
+      localStorage.getItem(
+        "language"
+      ) || "en"
+  );
+
+  // =====================================================
+  // THEME
+  // =====================================================
+
+  const [theme, setTheme] = useState(
+    () =>
+      localStorage.getItem(
+        "theme"
+      ) || "system"
+  );
+
+  // =====================================================
+  // ACCENT COLOR
+  // =====================================================
+
+  const [accentColor, setAccentColor] =
+    useState(
+      () =>
+        localStorage.getItem(
+          "accentColor"
+        ) || "blue"
+    );
+
+  // =====================================================
+  // DENSITY
+  // =====================================================
+
+  const [density, setDensity] =
+    useState(
+      () =>
+        localStorage.getItem(
+          "density"
+        ) || "comfortable"
+    );
+
+  // =====================================================
+  // REDUCED MOTION
+  // =====================================================
+
+  const [reducedMotion, setReducedMotion] =
+    useState(
+      () =>
+        localStorage.getItem(
+          "reducedMotion"
+        ) === "true"
+    );
+
+  // =====================================================
+  // NOTIFICATIONS
+  // =====================================================
+
+  const [notifications, setNotifications] =
+    useState(
+      () =>
+        localStorage.getItem(
+          "notifications"
+        ) !== "false"
+    );
+
+  const [
+    emailNotifications,
+    setEmailNotifications,
+  ] = useState(
+    () =>
+      localStorage.getItem(
+        "emailNotifications"
+      ) !== "false"
+  );
+
+  const [
+    paymentNotifications,
+    setPaymentNotifications,
+  ] = useState(
+    () =>
+      localStorage.getItem(
+        "paymentNotifications"
+      ) !== "false"
+  );
+
+  const [
+    settlementNotifications,
+    setSettlementNotifications,
+  ] = useState(
+    () =>
+      localStorage.getItem(
+        "settlementNotifications"
+      ) !== "false"
+  );
+
+  // =====================================================
+  // UI
+  // =====================================================
+
+  const [saved, setSaved] =
+    useState(false);
+
+  const [error, setError] =
+    useState("");
+
+  const [showReset, setShowReset] =
+    useState(false);
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  // =====================================================
+  // PASSWORD
+  // =====================================================
+
+  const [passwordForm, setPasswordForm] =
+    useState({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+
+  // =====================================================
+  // LOAD PROFILE
+  // =====================================================
 
   useEffect(() => {
     const loadProfile = async () => {
       try {
-        const response = await getMyProfile();
-        setProfile(response.data.data);
+        setLoading(true);
+        setError("");
+
+        const response =
+          await getMyProfile();
+
+        setProfile(
+          response?.data?.data || user
+        );
       } catch (error) {
-        console.error("Settings profile error:", error);
+        console.error(
+          "Settings profile error:",
+          error
+        );
+
+        setProfile(user || null);
       } finally {
         setLoading(false);
       }
     };
 
     loadProfile();
-  }, []);
+  }, [user]);
 
-  const handleNotificationChange = (e) => {
-    const value = e.target.checked;
+  // =====================================================
+  // APPLY LANGUAGE
+  // =====================================================
+
+  useEffect(() => {
+    const applyLanguage = async () => {
+      try {
+        await i18n.changeLanguage(
+          language
+        );
+
+        localStorage.setItem(
+          "language",
+          language
+        );
+
+        document.documentElement.lang =
+          language;
+
+        document.documentElement.dir =
+          "ltr";
+      } catch (error) {
+        console.error(
+          "Language error:",
+          error
+        );
+      }
+    };
+
+    applyLanguage();
+  }, [language]);
+
+  // =====================================================
+  // APPLY THEME
+  // =====================================================
+
+  useEffect(() => {
+    document.documentElement.setAttribute(
+      "data-theme",
+      theme
+    );
+
+    document.documentElement.setAttribute(
+      "data-color",
+      accentColor
+    );
+
+    document.documentElement.setAttribute(
+      "data-density",
+      density
+    );
+
+    document.documentElement.setAttribute(
+      "data-reduced-motion",
+      reducedMotion
+        ? "true"
+        : "false"
+    );
+
+    localStorage.setItem(
+      "theme",
+      theme
+    );
+
+    localStorage.setItem(
+      "accentColor",
+      accentColor
+    );
+
+    localStorage.setItem(
+      "density",
+      density
+    );
+
+    localStorage.setItem(
+      "reducedMotion",
+      reducedMotion.toString()
+    );
+  }, [
+    theme,
+    accentColor,
+    density,
+    reducedMotion,
+  ]);
+
+  // =====================================================
+  // LANGUAGE CHANGE
+  // =====================================================
+
+ const handleLanguageChange = async (e) => {
+  const selected = e.target.value;
+
+  try {
+    await i18n.changeLanguage(selected);
+
+    setLanguage(selected);
+
+    localStorage.setItem(
+      "language",
+      selected
+    );
+
+    showSaved();
+  } catch (error) {
+    console.error(
+      "Language change error:",
+      error
+    );
+
+    setError(
+      t(
+        "messages.languageChangeError",
+        "Failed to change language."
+      )
+    );
+  }
+};
+
+// =====================================================
+// SAVE MESSAGE
+// =====================================================
+
+const showSaved = () => {
+  setSaved(true);
+
+  setTimeout(() => {
+    setSaved(false);
+  }, 2500);
+};
+  // =====================================================
+  // SAVE SETTINGS
+  // =====================================================
+
+  const handleSave = () => {
+    try {
+      localStorage.setItem(
+        "language",
+        language
+      );
+
+      localStorage.setItem(
+        "theme",
+        theme
+      );
+
+      localStorage.setItem(
+        "accentColor",
+        accentColor
+      );
+
+      localStorage.setItem(
+        "density",
+        density
+      );
+
+      localStorage.setItem(
+        "reducedMotion",
+        reducedMotion.toString()
+      );
+
+      localStorage.setItem(
+        "notifications",
+        notifications.toString()
+      );
+
+      localStorage.setItem(
+        "emailNotifications",
+        emailNotifications.toString()
+      );
+
+      localStorage.setItem(
+        "paymentNotifications",
+        paymentNotifications.toString()
+      );
+
+      localStorage.setItem(
+        "settlementNotifications",
+        settlementNotifications.toString()
+      );
+
+      i18n.changeLanguage(
+        language
+      );
+
+      setError("");
+      showSaved();
+    } catch (error) {
+      console.error(
+        "Save settings error:",
+        error
+      );
+
+      setError(
+        t(
+          "messages.settingsSaveError",
+          "Failed to save settings."
+        )
+      );
+    }
+  };
+
+  // =====================================================
+  // RESET
+  // =====================================================
+
+  const handleReset = () => {
+    localStorage.removeItem(
+      "language"
+    );
+
+    localStorage.removeItem(
+      "theme"
+    );
+
+    localStorage.removeItem(
+      "accentColor"
+    );
+
+    localStorage.removeItem(
+      "density"
+    );
+
+    localStorage.removeItem(
+      "reducedMotion"
+    );
+
+    localStorage.removeItem(
+      "notifications"
+    );
+
+    localStorage.removeItem(
+      "emailNotifications"
+    );
+
+    localStorage.removeItem(
+      "paymentNotifications"
+    );
+
+    localStorage.removeItem(
+      "settlementNotifications"
+    );
+
+    setLanguage("en");
+    setTheme("system");
+    setAccentColor("blue");
+    setDensity("comfortable");
+    setReducedMotion(false);
+
+    setNotifications(true);
+    setEmailNotifications(true);
+    setPaymentNotifications(true);
+    setSettlementNotifications(true);
+
+    i18n.changeLanguage("en");
+
+    setShowReset(false);
+
+    showSaved();
+  };
+
+  // =====================================================
+  // NOTIFICATION
+  // =====================================================
+
+  const handleNotifications = (
+    e
+  ) => {
+    const value =
+      e.target.checked;
 
     setNotifications(value);
-    localStorage.setItem("notifications", value);
-    setSaved(true);
 
-    setTimeout(() => {
-      setSaved(false);
-    }, 2000);
+    localStorage.setItem(
+      "notifications",
+      value.toString()
+    );
   };
+
+  // =====================================================
+  // PASSWORD
+  // =====================================================
+
+  const handlePasswordChange = (
+    e
+  ) => {
+    const {
+      name,
+      value,
+    } = e.target;
+
+    setPasswordForm(
+      (prev) => ({
+        ...prev,
+        [name]: value,
+      })
+    );
+
+    setError("");
+  };
+
+  const handlePasswordSubmit = (
+    e
+  ) => {
+    e.preventDefault();
+
+    if (
+      !passwordForm.currentPassword
+    ) {
+      setError(
+        t(
+          "messages.currentPasswordRequired",
+          "Please enter your current password."
+        )
+      );
+
+      return;
+    }
+
+    if (
+      !passwordForm.newPassword
+    ) {
+      setError(
+        t(
+          "messages.newPasswordRequired",
+          "Please enter a new password."
+        )
+      );
+
+      return;
+    }
+
+    if (
+      passwordForm.newPassword.length <
+      6
+    ) {
+      setError(
+        t(
+          "messages.passwordMinLength",
+          "New password must contain at least 6 characters."
+        )
+      );
+
+      return;
+    }
+
+    if (
+      passwordForm.newPassword !==
+      passwordForm.confirmPassword
+    ) {
+      setError(
+        t(
+          "messages.passwordMismatch",
+          "New passwords do not match."
+        )
+      );
+
+      return;
+    }
+
+    /*
+      Your current code does not include
+      an admin password-update API.
+
+      Therefore we do not pretend that the
+      password was actually changed in the
+      database.
+    */
+
+    alert(
+      t(
+        "security.passwordBackendPending",
+        "Password change is ready to be connected to the backend."
+      )
+    );
+
+    setPasswordForm({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+
+    setShowPassword(false);
+    setError("");
+  };
+
+  // =====================================================
+  // LOGOUT
+  // =====================================================
 
   const handleLogout = () => {
+    const confirmed =
+      window.confirm(
+        t(
+          "messages.confirmLogout",
+          "Are you sure you want to log out?"
+        )
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
     logout();
-    navigate("/login");
+
+    navigate(
+      "/login",
+      {
+        replace: true,
+      }
+    );
   };
+
+  // =====================================================
+  // ROLE
+  // =====================================================
+
+  const role =
+    profile?.role?.toLowerCase() ===
+    "admin"
+      ? t(
+          "user.administrator",
+          "Administrator"
+        )
+      : t(
+          "user.user",
+          "User"
+        );
+
+  // =====================================================
+  // CURRENT LANGUAGE
+  // =====================================================
+
+  const selectedLanguage =
+    languages.find(
+      (item) =>
+        item.code === language
+    );
+
+  // =====================================================
+  // LOADING
+  // =====================================================
 
   if (loading) {
     return (
-      <div style={styles.loading}>
-        <h2>Loading settings...</h2>
+      <div className="admin-settings-loading">
+
+        <div className="admin-settings-spinner"></div>
+
+        <h2>
+          {t(
+            "settings.loading",
+            "Loading settings..."
+          )}
+        </h2>
+
+        <p>
+          {t(
+            "settings.loadingDescription",
+            "Please wait while your settings are loaded."
+          )}
+        </p>
+
       </div>
     );
   }
 
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
-    <div style={styles.page}>
-      {/* Header */}
-      <div style={styles.header}>
-        <span style={styles.eyebrow}>ACCOUNT</span>
+    <div className="admin-settings-page">
 
-        <h1 style={styles.title}>Settings</h1>
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
-        <p style={styles.subtitle}>
-          Manage your account preferences and security.
-        </p>
+      <div className="admin-settings-header">
+
+        <div>
+
+          <span className="admin-settings-eyebrow">
+            {t(
+              "settings.preferences",
+              "ACCOUNT PREFERENCES"
+            )}
+          </span>
+
+          <h1>
+            {t(
+              "settings.title",
+              "Settings"
+            )}
+          </h1>
+
+          <p>
+            {t(
+              "settings.description",
+              "Manage your account preferences and security."
+            )}
+          </p>
+
+        </div>
+
+        <div className="admin-settings-status">
+
+          <span></span>
+
+          {t(
+            "common.active",
+            "Active"
+          )}
+
+        </div>
+
       </div>
 
-      {/* Success message */}
+      {/* =================================================
+          SUCCESS
+      ================================================= */}
+
       {saved && (
-        <div style={styles.success}>
-          ✓ Settings saved successfully.
+        <div className="admin-settings-success">
+
+          <span>✓</span>
+
+          {t(
+            "messages.settingsSaved",
+            "Settings saved successfully."
+          )}
+
         </div>
       )}
 
-      {/* Account section */}
-      <div style={styles.card}>
-        <div style={styles.sectionHeader}>
+      {/* =================================================
+          ERROR
+      ================================================= */}
+
+      {error && (
+        <div className="admin-settings-error">
+
+          <span>!</span>
+
           <div>
-            <h2 style={styles.sectionTitle}>
-              Account Information
-            </h2>
-
-            <p style={styles.sectionText}>
-              Basic information associated with your account.
-            </p>
-          </div>
-        </div>
-
-        <div style={styles.infoGrid}>
-          <div style={styles.infoBox}>
-            <span style={styles.label}>Full Name</span>
-            <strong>
-              {profile?.fullName || "Not provided"}
-            </strong>
-          </div>
-
-          <div style={styles.infoBox}>
-            <span style={styles.label}>Email</span>
-            <strong>
-              {profile?.email || "Not provided"}
-            </strong>
-          </div>
-
-          <div style={styles.infoBox}>
-            <span style={styles.label}>Phone</span>
-            <strong>
-              {profile?.phoneNumber || "Not provided"}
-            </strong>
-          </div>
-
-          <div style={styles.infoBox}>
-            <span style={styles.label}>Role</span>
-            <strong style={{ textTransform: "capitalize" }}>
-              {profile?.role || "user"}
-            </strong>
-          </div>
-        </div>
-
-        <button
-          onClick={() => navigate("/user/profile")}
-          style={styles.secondaryButton}
-        >
-          View Profile
-        </button>
-      </div>
-
-      {/* Notification settings */}
-      <div style={styles.card}>
-        <div style={styles.sectionHeader}>
-          <div>
-            <h2 style={styles.sectionTitle}>
-              Notifications
-            </h2>
-
-            <p style={styles.sectionText}>
-              Control whether you receive application
-              notifications.
-            </p>
-          </div>
-        </div>
-
-        <label style={styles.toggleRow}>
-          <div>
-            <strong>Email & Application Notifications</strong>
-
-            <p style={styles.smallText}>
-              Receive updates about invoices, payments and
-              settlements.
-            </p>
-          </div>
-
-          <input
-            type="checkbox"
-            checked={notifications}
-            onChange={handleNotificationChange}
-            style={styles.checkbox}
-          />
-        </label>
-      </div>
-
-      {/* Security */}
-      <div style={styles.card}>
-        <div style={styles.sectionHeader}>
-          <div>
-            <h2 style={styles.sectionTitle}>
-              Security
-            </h2>
-
-            <p style={styles.sectionText}>
-              Keep your account protected.
-            </p>
-          </div>
-        </div>
-
-        <div style={styles.securityRow}>
-          <div>
-            <strong>Password</strong>
-
-            <p style={styles.smallText}>
-              Your password is securely stored.
-            </p>
+            {error}
           </div>
 
           <button
-            onClick={() => {
-              alert(
-                "Password change functionality will be connected to the backend next."
-              );
-            }}
-            style={styles.secondaryButton}
+            type="button"
+            onClick={() =>
+              setError("")
+            }
           >
-            Change Password
+            ×
           </button>
+
         </div>
+      )}
+
+      {/* =================================================
+          ADMIN ACCOUNT
+      ================================================= */}
+
+      <section className="admin-settings-card">
+
+        <div className="admin-settings-card-header">
+
+          <div className="admin-settings-title-wrap">
+
+            <div className="admin-settings-icon">
+              👤
+            </div>
+
+            <div>
+
+              <span className="admin-settings-section-label">
+                {t(
+                  "settings.account",
+                  "ACCOUNT"
+                )}
+              </span>
+
+              <h2>
+                {t(
+                  "settings.accountInformation",
+                  "Account Information"
+                )}
+              </h2>
+
+              <p>
+                {t(
+                  "settings.accountDescription",
+                  "Basic information associated with your administrator account."
+                )}
+              </p>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="admin-settings-account">
+
+          <div className="admin-settings-avatar">
+
+            {(profile?.fullName ||
+              "A")
+              .charAt(0)
+              .toUpperCase()}
+
+          </div>
+
+          <div className="admin-settings-account-info">
+
+            <h3>
+              {profile?.fullName ||
+                t(
+                  "user.administrator",
+                  "Administrator"
+                )}
+            </h3>
+
+            <p>
+              {profile?.email ||
+                t(
+                  "profile.notProvided",
+                  "Not provided"
+                )}
+            </p>
+
+            <span>
+              {role}
+            </span>
+
+          </div>
+
+          <button
+            type="button"
+            className="admin-settings-secondary"
+            onClick={() =>
+              navigate(
+                "/admin/users"
+              )
+            }
+          >
+            {t(
+              "settings.manageUsers",
+              "Manage Users"
+            )}
+          </button>
+
+        </div>
+
+        <div className="admin-settings-info-grid">
+
+          <InfoBox
+            label={t(
+              "users.name",
+              "Name"
+            )}
+            value={
+              profile?.fullName ||
+              "-"
+            }
+          />
+
+          <InfoBox
+            label={t(
+              "users.email",
+              "Email"
+            )}
+            value={
+              profile?.email ||
+              "-"
+            }
+          />
+
+          <InfoBox
+            label={t(
+              "users.phone",
+              "Phone"
+            )}
+            value={
+              profile?.phoneNumber ||
+              "-"
+            }
+          />
+
+          <InfoBox
+            label={t(
+              "users.role",
+              "Role"
+            )}
+            value={role}
+          />
+
+        </div>
+
+      </section>
+
+      {/* =================================================
+          SETTINGS GRID
+      ================================================= */}
+
+      <div className="admin-settings-grid">
+
+        {/* =================================================
+            LANGUAGE
+        ================================================= */}
+
+        <section className="admin-settings-card">
+
+          <CardHeader
+            icon="🌐"
+            title={t(
+              "settings.language",
+              "Language"
+            )}
+            description={t(
+              "settings.languageDescription",
+              "Choose the application language."
+            )}
+          />
+
+          <div className="admin-settings-control">
+
+            <label htmlFor="admin-language">
+              {t(
+                "settings.language",
+                "Language"
+              )}
+            </label>
+
+            <select
+              id="admin-language"
+              value={language}
+              onChange={
+                handleLanguageChange
+              }
+            >
+
+              {languages.map(
+                (item) => (
+                  <option
+                    key={item.code}
+                    value={
+                      item.code
+                    }
+                  >
+                    {item.flag}{" "}
+                    {item.label}
+                  </option>
+                )
+              )}
+
+            </select>
+
+          </div>
+
+          <div className="admin-settings-current">
+
+            <span>
+              {
+                selectedLanguage?.flag
+              }
+            </span>
+
+            <div>
+
+              <strong>
+                {
+                  selectedLanguage?.label
+                }
+              </strong>
+
+              <small>
+                {t(
+                  "settings.currentLanguage",
+                  "Current application language"
+                )}
+              </small>
+
+            </div>
+
+          </div>
+
+        </section>
+
+        {/* =================================================
+            APPEARANCE
+        ================================================= */}
+
+        <section className="admin-settings-card">
+
+          <CardHeader
+            icon="🎨"
+            title={t(
+              "settings.appearance",
+              "Appearance"
+            )}
+            description={t(
+              "settings.appearanceDescription",
+              "Customize the application appearance."
+            )}
+          />
+
+          <div className="admin-settings-theme-grid">
+
+            <ThemeChoice
+              value="light"
+              current={theme}
+              icon="☀️"
+              title={t(
+                "settings.light",
+                "Light"
+              )}
+              description={t(
+                "settings.lightDescription",
+                "Use the light theme."
+              )}
+              onChange={
+                setTheme
+              }
+            />
+
+            <ThemeChoice
+              value="dark"
+              current={theme}
+              icon="🌙"
+              title={t(
+                "settings.dark",
+                "Dark"
+              )}
+              description={t(
+                "settings.darkDescription",
+                "Use the dark theme."
+              )}
+              onChange={
+                setTheme
+              }
+            />
+
+            <ThemeChoice
+              value="system"
+              current={theme}
+              icon="💻"
+              title={t(
+                "settings.system",
+                "System"
+              )}
+              description={t(
+                "settings.systemDescription",
+                "Follow your device."
+              )}
+              onChange={
+                setTheme
+              }
+            />
+
+          </div>
+
+        </section>
+
+        {/* =================================================
+            ACCENT COLOR
+        ================================================= */}
+
+        <section className="admin-settings-card">
+
+          <CardHeader
+            icon="🖌️"
+            title={t(
+              "settings.accent",
+              "Accent Color"
+            )}
+            description={t(
+              "settings.accentDescription",
+              "Choose the primary application color."
+            )}
+          />
+
+          <div className="admin-settings-colors">
+
+            <ColorChoice
+              value="blue"
+              color="#2864e8"
+              current={
+                accentColor
+              }
+              title={t(
+                "settings.blue",
+                "Blue"
+              )}
+              onChange={
+                setAccentColor
+              }
+            />
+
+            <ColorChoice
+              value="purple"
+              color="#7c3aed"
+              current={
+                accentColor
+              }
+              title={t(
+                "settings.purple",
+                "Purple"
+              )}
+              onChange={
+                setAccentColor
+              }
+            />
+
+            <ColorChoice
+              value="green"
+              color="#178347"
+              current={
+                accentColor
+              }
+              title={t(
+                "settings.green",
+                "Green"
+              )}
+              onChange={
+                setAccentColor
+              }
+            />
+
+            <ColorChoice
+              value="orange"
+              color="#d97706"
+              current={
+                accentColor
+              }
+              title={t(
+                "settings.orange",
+                "Orange"
+              )}
+              onChange={
+                setAccentColor
+              }
+            />
+
+            <ColorChoice
+              value="red"
+              color="#dc2626"
+              current={
+                accentColor
+              }
+              title={t(
+                "settings.red",
+                "Red"
+              )}
+              onChange={
+                setAccentColor
+              }
+            />
+
+          </div>
+
+        </section>
+
+        {/* =================================================
+            DISPLAY
+        ================================================= */}
+
+        <section className="admin-settings-card">
+
+          <CardHeader
+            icon="📐"
+            title={t(
+              "settings.display",
+              "Display"
+            )}
+            description={t(
+              "settings.displayDescription",
+              "Customize how the interface behaves."
+            )}
+          />
+
+          <div className="admin-settings-display-row">
+
+            <div>
+
+              <strong>
+                {t(
+                  "settings.density",
+                  "Interface Density"
+                )}
+              </strong>
+
+              <span>
+                {t(
+                  "settings.densityDescription",
+                  "Control the spacing between elements."
+                )}
+              </span>
+
+            </div>
+
+            <select
+              value={density}
+              onChange={(e) =>
+                setDensity(
+                  e.target.value
+                )
+              }
+            >
+
+              <option value="comfortable">
+                {t(
+                  "settings.comfortable",
+                  "Comfortable"
+                )}
+              </option>
+
+              <option value="compact">
+                {t(
+                  "settings.compact",
+                  "Compact"
+                )}
+              </option>
+
+            </select>
+
+          </div>
+
+          <div className="admin-settings-display-row">
+
+            <div>
+
+              <strong>
+                {t(
+                  "settings.reduceMotion",
+                  "Reduce Motion"
+                )}
+              </strong>
+
+              <span>
+                {t(
+                  "settings.reduceMotionDescription",
+                  "Reduce animations and visual movement."
+                )}
+              </span>
+
+            </div>
+
+            <Toggle
+              checked={
+                reducedMotion
+              }
+              onChange={(e) =>
+                setReducedMotion(
+                  e.target.checked
+                )
+              }
+            />
+
+          </div>
+
+        </section>
+
       </div>
 
-      {/* Danger zone */}
-      <div style={styles.dangerCard}>
+      {/* =================================================
+          NOTIFICATIONS
+      ================================================= */}
+
+      <section className="admin-settings-card">
+
+        <CardHeader
+          icon="🔔"
+          title={t(
+            "settings.notifications",
+            "Notifications"
+          )}
+          description={t(
+            "notifications.chooseUpdates",
+            "Choose what notifications you want to receive."
+          )}
+        />
+
+        <div className="admin-settings-notification-row">
+
+          <div>
+
+            <strong>
+              {t(
+                "notifications.all",
+                "All Notifications"
+              )}
+            </strong>
+
+            <span>
+              {t(
+                "notifications.allDescription",
+                "Enable or disable application notifications."
+              )}
+            </span>
+
+          </div>
+
+          <Toggle
+            checked={
+              notifications
+            }
+            onChange={
+              handleNotifications
+            }
+          />
+
+        </div>
+
+        <div className="admin-settings-notification-row">
+
+          <div>
+
+            <strong>
+              {t(
+                "notifications.email",
+                "Email Notifications"
+              )}
+            </strong>
+
+            <span>
+              {t(
+                "notifications.emailDescription",
+                "Receive important account updates by email."
+              )}
+            </span>
+
+          </div>
+
+          <Toggle
+            checked={
+              emailNotifications
+            }
+            onChange={(e) =>
+              setEmailNotifications(
+                e.target.checked
+              )
+            }
+          />
+
+        </div>
+
+        <div className="admin-settings-notification-row">
+
+          <div>
+
+            <strong>
+              {t(
+                "notifications.payment",
+                "Payment Notifications"
+              )}
+            </strong>
+
+            <span>
+              {t(
+                "notifications.paymentDescription",
+                "Receive payment updates."
+              )}
+            </span>
+
+          </div>
+
+          <Toggle
+            checked={
+              paymentNotifications
+            }
+            onChange={(e) =>
+              setPaymentNotifications(
+                e.target.checked
+              )
+            }
+          />
+
+        </div>
+
+        <div className="admin-settings-notification-row">
+
+          <div>
+
+            <strong>
+              {t(
+                "notifications.settlement",
+                "Settlement Notifications"
+              )}
+            </strong>
+
+            <span>
+              {t(
+                "notifications.settlementDescription",
+                "Receive settlement updates."
+              )}
+            </span>
+
+          </div>
+
+          <Toggle
+            checked={
+              settlementNotifications
+            }
+            onChange={(e) =>
+              setSettlementNotifications(
+                e.target.checked
+              )
+            }
+          />
+
+        </div>
+
+      </section>
+
+      {/* =================================================
+          SECURITY
+      ================================================= */}
+
+      <section className="admin-settings-card">
+
+        <CardHeader
+          icon="🔐"
+          title={t(
+            "settings.security",
+            "Security"
+          )}
+          description={t(
+            "security.description",
+            "Manage your account security."
+          )}
+        />
+
+        <div className="admin-settings-security-row">
+
+          <div>
+
+            <strong>
+              {t(
+                "security.password",
+                "Password"
+              )}
+            </strong>
+
+            <span>
+              {t(
+                "security.passwordDescription",
+                "Update your account password."
+              )}
+            </span>
+
+          </div>
+
+          <button
+            type="button"
+            className="admin-settings-secondary"
+            onClick={() =>
+              setShowPassword(
+                !showPassword
+              )
+            }
+          >
+            {t(
+              "security.changePassword",
+              "Change Password"
+            )}
+          </button>
+
+        </div>
+
+        {showPassword && (
+          <form
+            className="admin-password-form"
+            onSubmit={
+              handlePasswordSubmit
+            }
+          >
+
+            <div className="admin-password-grid">
+
+              <div>
+
+                <label>
+                  {t(
+                    "security.currentPassword",
+                    "Current Password"
+                  )}
+                </label>
+
+                <input
+                  type="password"
+                  name="currentPassword"
+                  value={
+                    passwordForm.currentPassword
+                  }
+                  onChange={
+                    handlePasswordChange
+                  }
+                  placeholder={t(
+                    "security.currentPasswordPlaceholder",
+                    "Enter current password"
+                  )}
+                />
+
+              </div>
+
+              <div>
+
+                <label>
+                  {t(
+                    "security.newPassword",
+                    "New Password"
+                  )}
+                </label>
+
+                <input
+                  type="password"
+                  name="newPassword"
+                  value={
+                    passwordForm.newPassword
+                  }
+                  onChange={
+                    handlePasswordChange
+                  }
+                  placeholder={t(
+                    "security.newPasswordPlaceholder",
+                    "Enter new password"
+                  )}
+                />
+
+              </div>
+
+              <div>
+
+                <label>
+                  {t(
+                    "security.confirmPassword",
+                    "Confirm New Password"
+                  )}
+                </label>
+
+                <input
+                  type="password"
+                  name="confirmPassword"
+                  value={
+                    passwordForm.confirmPassword
+                  }
+                  onChange={
+                    handlePasswordChange
+                  }
+                  placeholder={t(
+                    "security.confirmPasswordPlaceholder",
+                    "Confirm new password"
+                  )}
+                />
+
+              </div>
+
+            </div>
+
+            <div className="admin-password-actions">
+
+              <button
+                type="button"
+                className="admin-settings-secondary"
+                onClick={() =>
+                  setShowPassword(
+                    false
+                  )
+                }
+              >
+                {t(
+                  "common.cancel",
+                  "Cancel"
+                )}
+              </button>
+
+              <button
+                type="submit"
+                className="admin-settings-primary"
+              >
+                {t(
+                  "security.updatePassword",
+                  "Update Password"
+                )}
+              </button>
+
+            </div>
+
+          </form>
+        )}
+
+      </section>
+
+      {/* =================================================
+          SESSION / LOGOUT
+      ================================================= */}
+
+      <section className="admin-settings-danger">
+
         <div>
-          <span style={styles.dangerEyebrow}>
-            SESSION
+
+          <span>
+            {t(
+              "settings.session",
+              "SESSION"
+            )}
           </span>
 
-          <h2 style={styles.dangerTitle}>
-            Sign out
+          <h2>
+            {t(
+              "security.signOut",
+              "Sign out"
+            )}
           </h2>
 
-          <p style={styles.sectionText}>
-            Sign out of your Accounts Settlement Tracker
-            account on this device.
+          <p>
+            {t(
+              "security.signOutDescription",
+              "Log out of your administrator session on this device."
+            )}
           </p>
+
         </div>
 
         <button
-          onClick={handleLogout}
-          style={styles.logoutButton}
+          type="button"
+          onClick={
+            handleLogout
+          }
         >
-          Logout
+          🚪{" "}
+          {t(
+            "menu.logout",
+            "Logout"
+          )}
         </button>
+
+      </section>
+
+      {/* =================================================
+          FOOTER ACTIONS
+      ================================================= */}
+
+      <div className="admin-settings-footer">
+
+        <button
+          type="button"
+          className="admin-settings-reset"
+          onClick={() =>
+            setShowReset(true)
+          }
+        >
+          {t(
+            "settings.reset",
+            "Reset Preferences"
+          )}
+        </button>
+
+        <button
+          type="button"
+          className="admin-settings-primary"
+          onClick={
+            handleSave
+          }
+        >
+          ✓{" "}
+          {t(
+            "settings.saveSettings",
+            "Save Settings"
+          )}
+        </button>
+
       </div>
+
+      {/* =================================================
+          RESET MODAL
+      ================================================= */}
+
+      {showReset && (
+        <div className="admin-settings-modal-overlay">
+
+          <div className="admin-settings-modal">
+
+            <div className="admin-settings-modal-icon">
+              ⚠️
+            </div>
+
+            <h2>
+              {t(
+                "settings.resetTitle",
+                "Reset Preferences?"
+              )}
+            </h2>
+
+            <p>
+              {t(
+                "settings.resetDescription",
+                "This will restore your application preferences to their default values."
+              )}
+            </p>
+
+            <div className="admin-settings-modal-actions">
+
+              <button
+                type="button"
+                className="admin-settings-secondary"
+                onClick={() =>
+                  setShowReset(
+                    false
+                  )
+                }
+              >
+                {t(
+                  "common.cancel",
+                  "Cancel"
+                )}
+              </button>
+
+              <button
+                type="button"
+                className="admin-settings-reset-confirm"
+                onClick={
+                  handleReset
+                }
+              >
+                {t(
+                  "settings.reset",
+                  "Reset Preferences"
+                )}
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      )}
+
     </div>
   );
 }
 
-const styles = {
-  page: {
-    width: "100%",
-    maxWidth: "1100px",
-    margin: "0 auto",
-    paddingBottom: "40px",
-  },
 
-  header: {
-    marginBottom: "25px",
-  },
+// =====================================================
+// CARD HEADER
+// =====================================================
 
-  eyebrow: {
-    fontSize: "11px",
-    fontWeight: "700",
-    letterSpacing: "1.5px",
-    color: "#2864e8",
-  },
+function CardHeader({
+  icon,
+  title,
+  description,
+}) {
+  return (
+    <div className="admin-settings-card-header">
 
-  title: {
-    margin: "6px 0",
-    fontSize: "34px",
-    color: "#111827",
-  },
+      <div className="admin-settings-title-wrap">
 
-  subtitle: {
-    margin: 0,
-    color: "#6b7280",
-  },
+        <div className="admin-settings-icon">
+          {icon}
+        </div>
 
-  success: {
-    background: "#e9f8ef",
-    color: "#18794e",
-    padding: "13px 16px",
-    borderRadius: "8px",
-    marginBottom: "20px",
-    fontSize: "14px",
-  },
+        <div>
 
-  card: {
-    background: "#ffffff",
-    borderRadius: "14px",
-    padding: "25px",
-    marginBottom: "20px",
-    border: "1px solid #edf0f5",
-    boxShadow: "0 5px 18px rgba(0,0,0,0.05)",
-  },
+          <h2>
+            {title}
+          </h2>
 
-  sectionHeader: {
-    marginBottom: "20px",
-  },
+          <p>
+            {description}
+          </p>
 
-  sectionTitle: {
-    margin: 0,
-    fontSize: "21px",
-    color: "#111827",
-  },
+        </div>
 
-  sectionText: {
-    margin: "6px 0 0",
-    color: "#6b7280",
-    fontSize: "13px",
-    lineHeight: "1.5",
-  },
+      </div>
 
-  infoGrid: {
-    display: "grid",
-    gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-    gap: "15px",
-    marginBottom: "20px",
-  },
+    </div>
+  );
+}
 
-  infoBox: {
-    background: "#f8fafc",
-    padding: "15px",
-    borderRadius: "9px",
-    border: "1px solid #edf0f5",
-  },
 
-  label: {
-    display: "block",
-    color: "#6b7280",
-    fontSize: "12px",
-    marginBottom: "6px",
-  },
+// =====================================================
+// INFO BOX
+// =====================================================
 
-  secondaryButton: {
-    border: "1px solid #d6dce5",
-    background: "#ffffff",
-    color: "#2864e8",
-    padding: "10px 15px",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
+function InfoBox({
+  label,
+  value,
+}) {
+  return (
+    <div className="admin-settings-info-box">
 
-  toggleRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "20px",
-    padding: "15px",
-    background: "#f8fafc",
-    borderRadius: "10px",
-  },
+      <span>
+        {label}
+      </span>
 
-  smallText: {
-    margin: "5px 0 0",
-    color: "#6b7280",
-    fontSize: "12px",
-  },
+      <strong>
+        {value}
+      </strong>
 
-  checkbox: {
-    width: "20px",
-    height: "20px",
-    cursor: "pointer",
-  },
+    </div>
+  );
+}
 
-  securityRow: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "20px",
-    padding: "16px",
-    background: "#f8fafc",
-    borderRadius: "10px",
-  },
 
-  dangerCard: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    gap: "20px",
-    background: "#fff7f7",
-    border: "1px solid #f3d2d2",
-    borderRadius: "14px",
-    padding: "25px",
-  },
+// =====================================================
+// THEME CHOICE
+// =====================================================
 
-  dangerEyebrow: {
-    color: "#c62828",
-    fontSize: "11px",
-    fontWeight: "700",
-    letterSpacing: "1.5px",
-  },
+function ThemeChoice({
+  value,
+  current,
+  icon,
+  title,
+  description,
+  onChange,
+}) {
+  return (
+    <label
+      className={`admin-settings-theme-choice ${
+        current === value
+          ? "selected"
+          : ""
+      }`}
+    >
 
-  dangerTitle: {
-    margin: "5px 0",
-    fontSize: "21px",
-    color: "#a91d1d",
-  },
+      <input
+        type="radio"
+        name="admin-theme"
+        value={value}
+        checked={
+          current === value
+        }
+        onChange={() =>
+          onChange(value)
+        }
+      />
 
-  logoutButton: {
-    border: "none",
-    background: "#d32f2f",
-    color: "#ffffff",
-    padding: "11px 20px",
-    borderRadius: "8px",
-    cursor: "pointer",
-    fontWeight: "600",
-  },
+      <div className="admin-settings-theme-icon">
+        {icon}
+      </div>
 
-  loading: {
-    padding: "40px",
-    textAlign: "center",
-  },
-};
+      <div>
+
+        <strong>
+          {title}
+        </strong>
+
+        <span>
+          {description}
+        </span>
+
+      </div>
+
+      <div className="admin-settings-theme-check">
+        {current === value
+          ? "✓"
+          : ""}
+      </div>
+
+    </label>
+  );
+}
+
+
+// =====================================================
+// COLOR CHOICE
+// =====================================================
+
+function ColorChoice({
+  value,
+  color,
+  current,
+  title,
+  onChange,
+}) {
+  return (
+    <button
+      type="button"
+      className={`admin-settings-color ${
+        current === value
+          ? "selected"
+          : ""
+      }`}
+      onClick={() =>
+        onChange(value)
+      }
+    >
+
+      <span
+        style={{
+          background: color,
+        }}
+      ></span>
+
+      <strong>
+        {title}
+      </strong>
+
+      {current === value && (
+        <small>
+          ✓
+        </small>
+      )}
+
+    </button>
+  );
+}
+
+
+// =====================================================
+// TOGGLE
+// =====================================================
+
+function Toggle({
+  checked,
+  onChange,
+}) {
+  return (
+    <label className="admin-settings-switch">
+
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+      />
+
+      <span></span>
+
+    </label>
+  );
+}
 
 export default Settings;

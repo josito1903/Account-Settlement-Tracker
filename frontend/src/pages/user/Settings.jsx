@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 
@@ -7,45 +8,134 @@ import i18n from "../../i18n";
 import "../../styles/UserSettings.css";
 
 function Settings() {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
   const { t } = useTranslation();
 
   // =====================================================
-  // THEME
-  // light | dark | system
+  // SUPPORTED LANGUAGES
   // =====================================================
 
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem("theme") || "system";
-  });
+  const languages = [
+    {
+      code: "en",
+      flag: "🇬🇧",
+      label: "English",
+    },
+    {
+      code: "fr",
+      flag: "🇫🇷",
+      label: "Français",
+    },
+    {
+      code: "es",
+      flag: "🇪🇸",
+      label: "Español",
+    },
+    {
+      code: "pt",
+      flag: "🇵🇹",
+      label: "Português",
+    },
+    {
+      code: "zh",
+      flag: "🇨🇳",
+      label: "中文",
+    },
+  ];
 
   // =====================================================
   // LANGUAGE
   // =====================================================
 
   const [language, setLanguage] = useState(() => {
-    return localStorage.getItem("language") || "en";
+    const saved =
+      localStorage.getItem("language");
+
+    const validLanguages = [
+      "en",
+      "fr",
+      "es",
+      "pt",
+      "zh",
+    ];
+
+    return validLanguages.includes(saved)
+      ? saved
+      : "en";
   });
+
+  // =====================================================
+  // THEME
+  // =====================================================
+
+  const [theme, setTheme] = useState(() => {
+    return (
+      localStorage.getItem("theme") ||
+      "system"
+    );
+  });
+
+  // =====================================================
+  // ACCENT COLOR
+  // =====================================================
+
+  const [accentColor, setAccentColor] =
+    useState(() => {
+      return (
+        localStorage.getItem(
+          "accentColor"
+        ) || "blue"
+      );
+    });
+
+  // =====================================================
+  // DISPLAY DENSITY
+  // =====================================================
+
+  const [density, setDensity] = useState(() => {
+    return (
+      localStorage.getItem("density") ||
+      "comfortable"
+    );
+  });
+
+  // =====================================================
+  // REDUCED MOTION
+  // =====================================================
+
+  const [reducedMotion, setReducedMotion] =
+    useState(() => {
+      return (
+        localStorage.getItem(
+          "reducedMotion"
+        ) === "true"
+      );
+    });
 
   // =====================================================
   // NOTIFICATIONS
   // =====================================================
 
-  const [emailNotifications, setEmailNotifications] =
-    useState(() => {
-      return (
-        localStorage.getItem("emailNotifications") !==
-        "false"
-      );
-    });
+  const [
+    emailNotifications,
+    setEmailNotifications,
+  ] = useState(() => {
+    return (
+      localStorage.getItem(
+        "emailNotifications"
+      ) !== "false"
+    );
+  });
 
   const [
     paymentNotifications,
     setPaymentNotifications,
   ] = useState(() => {
     return (
-      localStorage.getItem("paymentNotifications") !==
-      "false"
+      localStorage.getItem(
+        "paymentNotifications"
+      ) !== "false"
     );
   });
 
@@ -64,20 +154,74 @@ function Settings() {
   // UI STATE
   // =====================================================
 
-  const [successMessage, setSuccessMessage] =
+  const [
+    successMessage,
+    setSuccessMessage,
+  ] = useState("");
+
+  const [errorMessage, setErrorMessage] =
     useState("");
 
   const [showPasswordModal, setShowPasswordModal] =
     useState(false);
 
-  const [passwordForm, setPasswordForm] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
+  const [
+    passwordMessage,
+    setPasswordMessage,
+  ] = useState("");
 
-  const [passwordMessage, setPasswordMessage] =
-    useState("");
+  // =====================================================
+  // PASSWORD
+  // =====================================================
+
+  const [passwordForm, setPasswordForm] =
+    useState({
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    });
+
+  // =====================================================
+  // LOAD PROFILE
+  // =====================================================
+
+  useEffect(() => {
+    // Profile is already supplied through
+    // AuthContext, so no additional API
+    // request is required here.
+  }, []);
+
+  // =====================================================
+  // APPLY LANGUAGE
+  // =====================================================
+
+  useEffect(() => {
+    const applyLanguage = async () => {
+      try {
+        await i18n.changeLanguage(
+          language
+        );
+      } catch (error) {
+        console.error(
+          "Language initialization error:",
+          error
+        );
+      }
+
+      localStorage.setItem(
+        "language",
+        language
+      );
+
+      document.documentElement.lang =
+        language;
+
+      document.documentElement.dir =
+        "ltr";
+    };
+
+    applyLanguage();
+  }, [language]);
 
   // =====================================================
   // APPLY THEME
@@ -89,81 +233,247 @@ function Settings() {
       theme
     );
 
-    localStorage.setItem("theme", theme);
-  }, [theme]);
-
-  // =====================================================
-  // APPLY LANGUAGE
-  // =====================================================
-
-  useEffect(() => {
-    i18n.changeLanguage(language);
-
-    localStorage.setItem(
-      "language",
-      language
+    document.documentElement.setAttribute(
+      "data-color",
+      accentColor
     );
 
-    // Arabic uses right-to-left layout
-    document.documentElement.dir =
-      language === "ar"
-        ? "rtl"
-        : "ltr";
-
-    document.documentElement.lang =
-      language;
-  }, [language]);
-
-  // =====================================================
-  // LANGUAGE CHANGE
-  // =====================================================
-
-  const handleLanguageChange = (e) => {
-    const selectedLanguage = e.target.value;
-
-    setLanguage(selectedLanguage);
-
-    setSuccessMessage(
-      "Language updated successfully."
+    document.documentElement.setAttribute(
+      "data-density",
+      density
     );
 
-    setTimeout(() => {
-      setSuccessMessage("");
-    }, 2500);
-  };
+    document.documentElement.setAttribute(
+      "data-reduced-motion",
+      reducedMotion
+        ? "true"
+        : "false"
+    );
 
-  // =====================================================
-  // SAVE SETTINGS
-  // =====================================================
-
-  const handleSave = () => {
     localStorage.setItem(
       "theme",
       theme
     );
 
     localStorage.setItem(
+      "accentColor",
+      accentColor
+    );
+
+    localStorage.setItem(
+      "density",
+      density
+    );
+
+    localStorage.setItem(
+      "reducedMotion",
+      reducedMotion.toString()
+    );
+  }, [
+    theme,
+    accentColor,
+    density,
+    reducedMotion,
+  ]);
+
+  // =====================================================
+  // LANGUAGE CHANGE
+  // =====================================================
+
+  const handleLanguageChange = async (
+    e
+  ) => {
+    const selectedLanguage =
+      e.target.value;
+
+    try {
+      await i18n.changeLanguage(
+        selectedLanguage
+      );
+
+      setLanguage(
+        selectedLanguage
+      );
+
+      localStorage.setItem(
+        "language",
+        selectedLanguage
+      );
+
+      setSuccessMessage(
+        i18n.t(
+          "messages.languageUpdated",
+          "Language updated successfully."
+        )
+      );
+
+      setErrorMessage("");
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 2500);
+    } catch (error) {
+      console.error(
+        "Language change error:",
+        error
+      );
+
+      setErrorMessage(
+        i18n.t(
+          "messages.languageChangeError",
+          "Failed to change language."
+        )
+      );
+    }
+  };
+
+  // =====================================================
+  // SAVE
+  // =====================================================
+
+  const handleSave = () => {
+    try {
+      localStorage.setItem(
+        "language",
+        language
+      );
+
+      localStorage.setItem(
+        "theme",
+        theme
+      );
+
+      localStorage.setItem(
+        "accentColor",
+        accentColor
+      );
+
+      localStorage.setItem(
+        "density",
+        density
+      );
+
+      localStorage.setItem(
+        "reducedMotion",
+        reducedMotion.toString()
+      );
+
+      localStorage.setItem(
+        "emailNotifications",
+        emailNotifications.toString()
+      );
+
+      localStorage.setItem(
+        "paymentNotifications",
+        paymentNotifications.toString()
+      );
+
+      localStorage.setItem(
+        "settlementNotifications",
+        settlementNotifications.toString()
+      );
+
+      setErrorMessage("");
+
+      setSuccessMessage(
+        t(
+          "messages.settingsSaved",
+          "Settings saved successfully."
+        )
+      );
+
+      setTimeout(() => {
+        setSuccessMessage("");
+      }, 3000);
+    } catch (error) {
+      console.error(
+        "Settings save error:",
+        error
+      );
+
+      setErrorMessage(
+        t(
+          "messages.settingsSaveError",
+          "Failed to save settings."
+        )
+      );
+    }
+  };
+
+  // =====================================================
+  // RESET
+  // =====================================================
+
+  const handleReset = () => {
+    const confirmed =
+      window.confirm(
+        t(
+          "settings.resetDescription",
+          "This will restore your preferences to their default values. Continue?"
+        )
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    setLanguage("en");
+    setTheme("system");
+    setAccentColor("blue");
+    setDensity("comfortable");
+    setReducedMotion(false);
+
+    setEmailNotifications(true);
+    setPaymentNotifications(true);
+    setSettlementNotifications(true);
+
+    localStorage.setItem(
       "language",
-      language
+      "en"
+    );
+
+    localStorage.setItem(
+      "theme",
+      "system"
+    );
+
+    localStorage.setItem(
+      "accentColor",
+      "blue"
+    );
+
+    localStorage.setItem(
+      "density",
+      "comfortable"
+    );
+
+    localStorage.setItem(
+      "reducedMotion",
+      "false"
     );
 
     localStorage.setItem(
       "emailNotifications",
-      emailNotifications.toString()
+      "true"
     );
 
     localStorage.setItem(
       "paymentNotifications",
-      paymentNotifications.toString()
+      "true"
     );
 
     localStorage.setItem(
       "settlementNotifications",
-      settlementNotifications.toString()
+      "true"
     );
 
+    i18n.changeLanguage("en");
+
     setSuccessMessage(
-      "Settings saved successfully."
+      t(
+        "settings.resetSuccess",
+        "Preferences have been reset."
+      )
     );
 
     setTimeout(() => {
@@ -172,75 +482,70 @@ function Settings() {
   };
 
   // =====================================================
-  // LOGOUT
+  // PASSWORD CHANGE
   // =====================================================
 
-  const handleLogoutAll = () => {
-    const confirmed = window.confirm(
-      t("menu.logout") +
-        "? Are you sure you want to log out of this account?"
-    );
-
-    if (confirmed) {
-      logout();
-    }
-  };
-
-  // =====================================================
-  // THEME LABEL
-  // =====================================================
-
-  const getThemeLabel = () => {
-    if (theme === "light") {
-      return t("settings.light") + " mode is currently selected.";
-    }
-
-    if (theme === "dark") {
-      return t("settings.dark") + " mode is currently selected.";
-    }
-
-    return "System mode follows your device appearance.";
-  };
-
-  // =====================================================
-  // PASSWORD FORM
-  // =====================================================
-
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (
+    e
+  ) => {
     const {
       name,
       value,
     } = e.target;
 
-    setPasswordForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setPasswordForm(
+      (previous) => ({
+        ...previous,
+        [name]: value,
+      })
+    );
 
     setPasswordMessage("");
+    setErrorMessage("");
   };
 
-  const handlePasswordSubmit = (e) => {
+  const handlePasswordSubmit = (
+    e
+  ) => {
     e.preventDefault();
 
-    if (!passwordForm.currentPassword) {
+    if (
+      !passwordForm.currentPassword
+    ) {
       setPasswordMessage(
-        "Please enter your current password."
+        t(
+          "messages.currentPasswordRequired",
+          "Please enter your current password."
+        )
       );
+
       return;
     }
 
-    if (!passwordForm.newPassword) {
+    if (
+      !passwordForm.newPassword
+    ) {
       setPasswordMessage(
-        "Please enter a new password."
+        t(
+          "messages.newPasswordRequired",
+          "Please enter a new password."
+        )
       );
+
       return;
     }
 
-    if (passwordForm.newPassword.length < 6) {
+    if (
+      passwordForm.newPassword.length <
+      6
+    ) {
       setPasswordMessage(
-        "New password must contain at least 6 characters."
+        t(
+          "messages.passwordMinLength",
+          "New password must contain at least 6 characters."
+        )
       );
+
       return;
     }
 
@@ -249,13 +554,29 @@ function Settings() {
       passwordForm.confirmPassword
     ) {
       setPasswordMessage(
-        "New passwords do not match."
+        t(
+          "messages.passwordMismatch",
+          "New passwords do not match."
+        )
       );
+
       return;
     }
 
+    /*
+      No password-update API was provided
+      in the current project code.
+
+      Therefore this validates the form
+      without falsely claiming that the
+      backend password has changed.
+    */
+
     setPasswordMessage(
-      "Password change is ready for backend integration."
+      t(
+        "security.passwordUpdated",
+        "Password change is ready for backend integration."
+      )
     );
 
     setPasswordForm({
@@ -264,6 +585,10 @@ function Settings() {
       confirmPassword: "",
     });
   };
+
+  // =====================================================
+  // CLOSE PASSWORD MODAL
+  // =====================================================
 
   const closePasswordModal = () => {
     setShowPasswordModal(false);
@@ -277,17 +602,107 @@ function Settings() {
     setPasswordMessage("");
   };
 
+  // =====================================================
+  // LOGOUT
+  // =====================================================
+
+  const handleLogout = () => {
+    const confirmed =
+      window.confirm(
+        t(
+          "messages.confirmLogout",
+          "Are you sure you want to log out of this account?"
+        )
+      );
+
+    if (!confirmed) {
+      return;
+    }
+
+    logout();
+
+    navigate(
+      "/login",
+      {
+        replace: true,
+      }
+    );
+  };
+
+  // =====================================================
+  // ROLE
+  // =====================================================
+
+  const getRoleLabel = () => {
+    if (
+      user?.role?.toLowerCase() ===
+      "admin"
+    ) {
+      return t(
+        "user.administrator",
+        "Administrator"
+      );
+    }
+
+    return t(
+      "user.user",
+      "User"
+    );
+  };
+
+  // =====================================================
+  // CURRENT LANGUAGE
+  // =====================================================
+
+  const currentLanguage =
+    languages.find(
+      (item) =>
+        item.code === language
+    );
+
+  // =====================================================
+  // RENDER
+  // =====================================================
+
   return (
     <div className="user-settings-page">
 
       {/* =================================================
-          SUCCESS MESSAGE
+          SUCCESS
       ================================================= */}
 
       {successMessage && (
         <div className="settings-success-message">
+
           <span>✓</span>
+
           {successMessage}
+
+        </div>
+      )}
+
+      {/* =================================================
+          ERROR
+      ================================================= */}
+
+      {errorMessage && (
+        <div className="settings-error-message">
+
+          <span>!</span>
+
+          <span>
+            {errorMessage}
+          </span>
+
+          <button
+            type="button"
+            onClick={() =>
+              setErrorMessage("")
+            }
+          >
+            ×
+          </button>
+
         </div>
       )}
 
@@ -296,52 +711,77 @@ function Settings() {
       ================================================= */}
 
       <div className="settings-header">
+
         <span className="settings-eyebrow">
-          {t("settings.preferences")}
+          {t(
+            "settings.preferences",
+            "ACCOUNT PREFERENCES"
+          )}
         </span>
 
         <h1>
-          {t("settings.title")}
+          {t(
+            "settings.title",
+            "Settings"
+          )}
         </h1>
 
         <p>
-          Manage your account preferences,
-          notifications and application appearance.
+          {t(
+            "settings.description",
+            "Manage your account preferences, notifications and application appearance."
+          )}
         </p>
+
       </div>
 
       {/* =================================================
-          ACCOUNT SUMMARY
+          ACCOUNT
       ================================================= */}
 
       <div className="settings-account-card">
 
         <div className="settings-avatar">
+
           {(user?.fullName || "U")
             .charAt(0)
             .toUpperCase()}
+
         </div>
 
         <div className="settings-account-info">
 
           <h2>
-            {user?.fullName || "User"}
+            {user?.fullName ||
+              t(
+                "user.user",
+                "User"
+              )}
           </h2>
 
           <p>
             {user?.email ||
-              "No email available"}
+              t(
+                "profile.notProvided",
+                "Not provided"
+              )}
           </p>
 
           <span className="settings-role">
-            {user?.role || "User"}
+            {getRoleLabel()}
           </span>
 
         </div>
 
         <div className="settings-account-status">
+
           <span className="status-dot"></span>
-          {t("common.active")}
+
+          {t(
+            "common.active",
+            "Active"
+          )}
+
         </div>
 
       </div>
@@ -353,7 +793,7 @@ function Settings() {
       <div className="settings-grid">
 
         {/* =================================================
-            NOTIFICATIONS
+            LANGUAGE
         ================================================= */}
 
         <div className="settings-card">
@@ -361,56 +801,82 @@ function Settings() {
           <div className="settings-card-heading">
 
             <div className="settings-card-icon">
-              🔔
+              🌐
             </div>
 
             <div>
+
               <h2>
-                {t("settings.notifications")}
+                {t(
+                  "settings.language",
+                  "Language"
+                )}
               </h2>
 
               <p>
-                Choose what updates you want
-                to receive.
+                {t(
+                  "settings.languageDescription",
+                  "Choose the language for the application."
+                )}
               </p>
+
             </div>
 
           </div>
 
-          <div className="settings-options">
+          <div className="language-selector">
 
-            <SettingToggle
-              title="Email Notifications"
-              description="Receive important account updates by email."
-              checked={emailNotifications}
-              onChange={() =>
-                setEmailNotifications(
-                  !emailNotifications
-                )
-              }
-            />
+            <label htmlFor="language">
+              {t(
+                "settings.language",
+                "Language"
+              )}
+            </label>
 
-            <SettingToggle
-              title="Payment Notifications"
-              description="Get notified when payment records change."
-              checked={paymentNotifications}
-              onChange={() =>
-                setPaymentNotifications(
-                  !paymentNotifications
-                )
+            <select
+              id="language"
+              value={language}
+              onChange={
+                handleLanguageChange
               }
-            />
+            >
 
-            <SettingToggle
-              title="Settlement Notifications"
-              description="Receive updates about settlement progress."
-              checked={settlementNotifications}
-              onChange={() =>
-                setSettlementNotifications(
-                  !settlementNotifications
+              {languages.map(
+                (item) => (
+                  <option
+                    key={item.code}
+                    value={item.code}
+                  >
+                    {item.flag}{" "}
+                    {item.label}
+                  </option>
                 )
-              }
-            />
+              )}
+
+            </select>
+
+          </div>
+
+          <div className="language-current">
+
+            <span>
+              {currentLanguage?.flag}
+            </span>
+
+            <div>
+
+              <strong>
+                {currentLanguage?.label}
+              </strong>
+
+              <small>
+                {t(
+                  "settings.currentLanguage",
+                  "Current application language"
+                )}
+              </small>
+
+            </div>
 
           </div>
 
@@ -429,250 +895,375 @@ function Settings() {
             </div>
 
             <div>
+
               <h2>
-                {t("settings.appearance")}
+                {t(
+                  "settings.appearance",
+                  "Appearance"
+                )}
               </h2>
 
               <p>
-                Choose how Accounts Settlement
-                Tracker looks.
+                {t(
+                  "settings.appearanceDescription",
+                  "Customize how the application looks."
+                )}
               </p>
+
             </div>
 
           </div>
 
           <div className="theme-options">
 
-            {/* LIGHT */}
+            <ThemeOption
+              value="light"
+              current={theme}
+              icon="☀️"
+              title={t(
+                "settings.light",
+                "Light"
+              )}
+              description={t(
+                "settings.lightDescription",
+                "Use the light application theme."
+              )}
+              onChange={setTheme}
+            />
 
-            <label
-              className={`theme-option ${
-                theme === "light"
-                  ? "selected"
-                  : ""
-              }`}
-            >
+            <ThemeOption
+              value="dark"
+              current={theme}
+              icon="🌙"
+              title={t(
+                "settings.dark",
+                "Dark"
+              )}
+              description={t(
+                "settings.darkDescription",
+                "Use the dark application theme."
+              )}
+              onChange={setTheme}
+            />
 
-              <input
-                type="radio"
-                name="theme"
-                value="light"
-                checked={theme === "light"}
-                onChange={(e) =>
-                  setTheme(e.target.value)
-                }
-              />
+            <ThemeOption
+              value="system"
+              current={theme}
+              icon="💻"
+              title={t(
+                "settings.system",
+                "System"
+              )}
+              description={t(
+                "settings.systemDescription",
+                "Follow your device appearance."
+              )}
+              onChange={setTheme}
+            />
 
-              <div className="theme-option-icon">
-                ☀️
-              </div>
-
-              <div className="theme-option-content">
-                <strong>
-                  {t("settings.light")}
-                </strong>
-
-                <span>
-                  Use the light application theme.
-                </span>
-              </div>
-
-              <div className="theme-check">
-                {theme === "light"
-                  ? "✓"
-                  : ""}
-              </div>
-
-            </label>
-
-            {/* DARK */}
-
-            <label
-              className={`theme-option ${
-                theme === "dark"
-                  ? "selected"
-                  : ""
-              }`}
-            >
-
-              <input
-                type="radio"
-                name="theme"
-                value="dark"
-                checked={theme === "dark"}
-                onChange={(e) =>
-                  setTheme(e.target.value)
-                }
-              />
-
-              <div className="theme-option-icon">
-                🌙
-              </div>
-
-              <div className="theme-option-content">
-                <strong>
-                  {t("settings.dark")}
-                </strong>
-
-                <span>
-                  Use the dark application theme.
-                </span>
-              </div>
-
-              <div className="theme-check">
-                {theme === "dark"
-                  ? "✓"
-                  : ""}
-              </div>
-
-            </label>
-
-            {/* SYSTEM */}
-
-            <label
-              className={`theme-option ${
-                theme === "system"
-                  ? "selected"
-                  : ""
-              }`}
-            >
-
-              <input
-                type="radio"
-                name="theme"
-                value="system"
-                checked={theme === "system"}
-                onChange={(e) =>
-                  setTheme(e.target.value)
-                }
-              />
-
-              <div className="theme-option-icon">
-                💻
-              </div>
-
-              <div className="theme-option-content">
-                <strong>
-                  {t("settings.system")}
-                </strong>
-
-                <span>
-                  Follow your device appearance.
-                </span>
-              </div>
-
-              <div className="theme-check">
-                {theme === "system"
-                  ? "✓"
-                  : ""}
-              </div>
-
-            </label>
-
-          </div>
-
-          <div className="theme-note">
-            {getThemeLabel()}
           </div>
 
         </div>
 
         {/* =================================================
-            LANGUAGE
+            ACCENT COLOR
         ================================================= */}
 
-        <div className="settings-card language-card">
+        <div className="settings-card">
 
           <div className="settings-card-heading">
 
             <div className="settings-card-icon">
-              🌐
+              🖌️
             </div>
 
             <div>
+
               <h2>
-                {t("settings.language")}
+                {t(
+                  "settings.accent",
+                  "Accent Color"
+                )}
               </h2>
 
               <p>
                 {t(
-                  "settings.languageDescription"
+                  "settings.accentDescription",
+                  "Choose the primary color used throughout the application."
                 )}
               </p>
+
             </div>
 
           </div>
 
-          <div className="language-selector">
+          <div className="accent-color-grid">
 
-            <label htmlFor="language">
-              {t("settings.language")}
-            </label>
+            <AccentOption
+              value="blue"
+              color="#2864e8"
+              current={accentColor}
+              label={t(
+                "settings.blue",
+                "Blue"
+              )}
+              onChange={setAccentColor}
+            />
+
+            <AccentOption
+              value="purple"
+              color="#7c3aed"
+              current={accentColor}
+              label={t(
+                "settings.purple",
+                "Purple"
+              )}
+              onChange={setAccentColor}
+            />
+
+            <AccentOption
+              value="green"
+              color="#178347"
+              current={accentColor}
+              label={t(
+                "settings.green",
+                "Green"
+              )}
+              onChange={setAccentColor}
+            />
+
+            <AccentOption
+              value="orange"
+              color="#d97706"
+              current={accentColor}
+              label={t(
+                "settings.orange",
+                "Orange"
+              )}
+              onChange={setAccentColor}
+            />
+
+            <AccentOption
+              value="red"
+              color="#dc2626"
+              current={accentColor}
+              label={t(
+                "settings.red",
+                "Red"
+              )}
+              onChange={setAccentColor}
+            />
+
+          </div>
+
+        </div>
+
+        {/* =================================================
+            DISPLAY
+        ================================================= */}
+
+        <div className="settings-card">
+
+          <div className="settings-card-heading">
+
+            <div className="settings-card-icon">
+              📐
+            </div>
+
+            <div>
+
+              <h2>
+                {t(
+                  "settings.display",
+                  "Display"
+                )}
+              </h2>
+
+              <p>
+                {t(
+                  "settings.displayDescription",
+                  "Customize the interface experience."
+                )}
+              </p>
+
+            </div>
+
+          </div>
+
+          <div className="display-setting-row">
+
+            <div>
+
+              <strong>
+                {t(
+                  "settings.density",
+                  "Interface Density"
+                )}
+              </strong>
+
+              <span>
+                {t(
+                  "settings.densityDescription",
+                  "Control the spacing throughout the interface."
+                )}
+              </span>
+
+            </div>
 
             <select
-              id="language"
-              value={language}
-              onChange={
-                handleLanguageChange
+              value={density}
+              onChange={(e) =>
+                setDensity(
+                  e.target.value
+                )
               }
             >
 
-              <option value="en">
-                🇬🇧 English
+              <option value="comfortable">
+                {t(
+                  "settings.comfortable",
+                  "Comfortable"
+                )}
               </option>
 
-              <option value="fr">
-                🇫🇷 Français
-              </option>
-
-              <option value="pt">
-                🇵🇹 Português
-              </option>
-
-              <option value="es">
-                🇪🇸 Español
-              </option>
-
-              <option value="ar">
-                🇸🇦 العربية
-              </option>
-
-              <option value="hi">
-                🇮🇳 हिन्दी
-              </option>
-
-              <option value="zh">
-                🇨🇳 中文
-              </option>
-
-              <option value="ja">
-                🇯🇵 日本語
-              </option>
-
-              <option value="de">
-                🇩🇪 Deutsch
-              </option>
-
-              <option value="it">
-                🇮🇹 Italiano
-              </option>
-
-              <option value="ru">
-                🇷🇺 Русский
-              </option>
-
-              <option value="ko">
-                🇰🇷 한국어
+              <option value="compact">
+                {t(
+                  "settings.compact",
+                  "Compact"
+                )}
               </option>
 
             </select>
 
           </div>
 
-          <div className="language-current">
-            🌐{" "}
-            {language.toUpperCase()}
+          <div className="display-setting-row">
+
+            <div>
+
+              <strong>
+                {t(
+                  "settings.reduceMotion",
+                  "Reduce Motion"
+                )}
+              </strong>
+
+              <span>
+                {t(
+                  "settings.reduceMotionDescription",
+                  "Reduce animations and visual movement."
+                )}
+              </span>
+
+            </div>
+
+            <Toggle
+              checked={
+                reducedMotion
+              }
+              onChange={(e) =>
+                setReducedMotion(
+                  e.target.checked
+                )
+              }
+            />
+
           </div>
+
+        </div>
+
+      </div>
+
+      {/* =================================================
+          NOTIFICATIONS
+      ================================================= */}
+
+      <div className="settings-card settings-full-card">
+
+        <div className="settings-card-heading">
+
+          <div className="settings-card-icon">
+            🔔
+          </div>
+
+          <div>
+
+            <h2>
+              {t(
+                "settings.notifications",
+                "Notifications"
+              )}
+            </h2>
+
+            <p>
+              {t(
+                "notifications.chooseUpdates",
+                "Choose what updates you want to receive."
+              )}
+            </p>
+
+          </div>
+
+        </div>
+
+        <div className="settings-options">
+
+          <SettingToggle
+            title={t(
+              "notifications.email",
+              "Email Notifications"
+            )}
+            description={t(
+              "notifications.emailDescription",
+              "Receive important account updates by email."
+            )}
+            checked={
+              emailNotifications
+            }
+            onChange={() =>
+              setEmailNotifications(
+                !emailNotifications
+              )
+            }
+          />
+
+          <SettingToggle
+            title={t(
+              "notifications.payment",
+              "Payment Notifications"
+            )}
+            description={t(
+              "notifications.paymentDescription",
+              "Get notified when payment records change."
+            )}
+            checked={
+              paymentNotifications
+            }
+            onChange={() =>
+              setPaymentNotifications(
+                !paymentNotifications
+              )
+            }
+          />
+
+          <SettingToggle
+            title={t(
+              "notifications.settlement",
+              "Settlement Notifications"
+            )}
+            description={t(
+              "notifications.settlementDescription",
+              "Receive updates about settlement progress."
+            )}
+            checked={
+              settlementNotifications
+            }
+            onChange={() =>
+              setSettlementNotifications(
+                !settlementNotifications
+              )
+            }
+          />
 
         </div>
 
@@ -682,7 +1273,7 @@ function Settings() {
           SECURITY
       ================================================= */}
 
-      <div className="settings-card security-card">
+      <div className="settings-card settings-full-card">
 
         <div className="settings-card-heading">
 
@@ -691,51 +1282,72 @@ function Settings() {
           </div>
 
           <div>
+
             <h2>
-              {t("settings.security")}
+              {t(
+                "settings.security",
+                "Security"
+              )}
             </h2>
 
             <p>
-              Manage your account access and
-              security.
+              {t(
+                "security.description",
+                "Manage your account access and security."
+              )}
             </p>
+
           </div>
 
         </div>
 
-        {/* ACCOUNT SECURITY */}
-
         <div className="security-row">
 
           <div>
+
             <strong>
-              Account Security
+              {t(
+                "security.account",
+                "Account Security"
+              )}
             </strong>
 
             <span>
-              Your account is protected by
-              authenticated access.
+              {t(
+                "security.accountDescription",
+                "Your account is protected by authenticated access."
+              )}
             </span>
+
           </div>
 
           <span className="secure-badge">
-            Secure
+            {t(
+              "security.secure",
+              "Secure"
+            )}
           </span>
 
         </div>
 
-        {/* PASSWORD */}
-
         <div className="security-row">
 
           <div>
+
             <strong>
-              Password
+              {t(
+                "security.password",
+                "Password"
+              )}
             </strong>
 
             <span>
-              Update your account password.
+              {t(
+                "security.passwordDescription",
+                "Update your account password."
+              )}
             </span>
+
           </div>
 
           <button
@@ -745,31 +1357,45 @@ function Settings() {
               setShowPasswordModal(true)
             }
           >
-            Change Password
+            {t(
+              "security.changePassword",
+              "Change Password"
+            )}
           </button>
 
         </div>
 
-        {/* LOGOUT */}
-
         <div className="security-row">
 
           <div>
+
             <strong>
-              {t("menu.logout")}
+              {t(
+                "security.signOut",
+                "Sign out"
+              )}
             </strong>
 
             <span>
-              Log out of your current session.
+              {t(
+                "security.signOutDescription",
+                "Log out of your current session."
+              )}
             </span>
+
           </div>
 
           <button
             type="button"
             className="logout-button"
-            onClick={handleLogoutAll}
+            onClick={
+              handleLogout
+            }
           >
-            {t("menu.logout")}
+            {t(
+              "menu.logout",
+              "Logout"
+            )}
           </button>
 
         </div>
@@ -777,29 +1403,50 @@ function Settings() {
       </div>
 
       {/* =================================================
-          SAVE
+          SAVE / RESET
       ================================================= */}
 
       <div className="settings-save-area">
 
         <button
           type="button"
-          className="save-settings-button"
-          onClick={handleSave}
+          className="settings-reset-button"
+          onClick={
+            handleReset
+          }
         >
-          {t("settings.saveSettings")}
+          {t(
+            "settings.reset",
+            "Reset Preferences"
+          )}
+        </button>
+
+        <button
+          type="button"
+          className="save-settings-button"
+          onClick={
+            handleSave
+          }
+        >
+          ✓{" "}
+          {t(
+            "settings.saveSettings",
+            "Save Settings"
+          )}
         </button>
 
       </div>
 
       {/* =================================================
-          CHANGE PASSWORD MODAL
+          PASSWORD MODAL
       ================================================= */}
 
       {showPasswordModal && (
         <div
           className="password-modal-overlay"
-          onClick={closePasswordModal}
+          onClick={
+            closePasswordModal
+          }
         >
 
           <div
@@ -812,19 +1459,29 @@ function Settings() {
             <div className="password-modal-header">
 
               <div>
+
                 <span className="settings-eyebrow">
-                  ACCOUNT SECURITY
+                  {t(
+                    "security.account",
+                    "ACCOUNT SECURITY"
+                  )}
                 </span>
 
                 <h2>
-                  Change Password
+                  {t(
+                    "security.changePassword",
+                    "Change Password"
+                  )}
                 </h2>
+
               </div>
 
               <button
                 type="button"
                 className="password-modal-close"
-                onClick={closePasswordModal}
+                onClick={
+                  closePasswordModal
+                }
               >
                 ×
               </button>
@@ -832,8 +1489,10 @@ function Settings() {
             </div>
 
             <p className="password-modal-description">
-              Update your account password using
-              the form below.
+              {t(
+                "security.passwordModalDescription",
+                "Update your account password using the form below."
+              )}
             </p>
 
             {passwordMessage && (
@@ -853,7 +1512,10 @@ function Settings() {
                 <div className="password-field">
 
                   <label>
-                    Current Password
+                    {t(
+                      "security.currentPassword",
+                      "Current Password"
+                    )}
                   </label>
 
                   <input
@@ -865,7 +1527,10 @@ function Settings() {
                     onChange={
                       handlePasswordChange
                     }
-                    placeholder="Enter current password"
+                    placeholder={t(
+                      "security.currentPasswordPlaceholder",
+                      "Enter current password"
+                    )}
                     autoComplete="current-password"
                   />
 
@@ -874,7 +1539,10 @@ function Settings() {
                 <div className="password-field">
 
                   <label>
-                    New Password
+                    {t(
+                      "security.newPassword",
+                      "New Password"
+                    )}
                   </label>
 
                   <input
@@ -886,7 +1554,10 @@ function Settings() {
                     onChange={
                       handlePasswordChange
                     }
-                    placeholder="Enter new password"
+                    placeholder={t(
+                      "security.newPasswordPlaceholder",
+                      "Enter new password"
+                    )}
                     autoComplete="new-password"
                   />
 
@@ -895,7 +1566,10 @@ function Settings() {
                 <div className="password-field">
 
                   <label>
-                    Confirm New Password
+                    {t(
+                      "security.confirmPassword",
+                      "Confirm New Password"
+                    )}
                   </label>
 
                   <input
@@ -907,7 +1581,10 @@ function Settings() {
                     onChange={
                       handlePasswordChange
                     }
-                    placeholder="Confirm new password"
+                    placeholder={t(
+                      "security.confirmPasswordPlaceholder",
+                      "Confirm new password"
+                    )}
                     autoComplete="new-password"
                   />
 
@@ -924,14 +1601,20 @@ function Settings() {
                     closePasswordModal
                   }
                 >
-                  {t("common.cancel")}
+                  {t(
+                    "common.cancel",
+                    "Cancel"
+                  )}
                 </button>
 
                 <button
                   type="submit"
                   className="password-save-btn"
                 >
-                  Update Password
+                  {t(
+                    "security.updatePassword",
+                    "Update Password"
+                  )}
                 </button>
 
               </div>
@@ -947,6 +1630,138 @@ function Settings() {
   );
 }
 
+
+// =====================================================
+// THEME OPTION
+// =====================================================
+
+function ThemeOption({
+  value,
+  current,
+  icon,
+  title,
+  description,
+  onChange,
+}) {
+  return (
+    <label
+      className={`theme-option ${
+        current === value
+          ? "selected"
+          : ""
+      }`}
+    >
+
+      <input
+        type="radio"
+        name="theme"
+        value={value}
+        checked={
+          current === value
+        }
+        onChange={() =>
+          onChange(value)
+        }
+      />
+
+      <div className="theme-option-icon">
+        {icon}
+      </div>
+
+      <div className="theme-option-content">
+
+        <strong>
+          {title}
+        </strong>
+
+        <span>
+          {description}
+        </span>
+
+      </div>
+
+      <div className="theme-check">
+        {current === value
+          ? "✓"
+          : ""}
+      </div>
+
+    </label>
+  );
+}
+
+
+// =====================================================
+// ACCENT COLOR
+// =====================================================
+
+function AccentOption({
+  value,
+  color,
+  current,
+  label,
+  onChange,
+}) {
+  return (
+    <button
+      type="button"
+      className={`accent-option ${
+        current === value
+          ? "selected"
+          : ""
+      }`}
+      onClick={() =>
+        onChange(value)
+      }
+      aria-label={label}
+    >
+
+      <span
+        className="accent-color-dot"
+        style={{
+          backgroundColor: color,
+        }}
+      ></span>
+
+      <strong>
+        {label}
+      </strong>
+
+      {current === value && (
+        <small>
+          ✓
+        </small>
+      )}
+
+    </button>
+  );
+}
+
+
+// =====================================================
+// TOGGLE
+// =====================================================
+
+function Toggle({
+  checked,
+  onChange,
+}) {
+  return (
+    <label className="switch">
+
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+      />
+
+      <span className="slider"></span>
+
+    </label>
+  );
+}
+
+
 // =====================================================
 // SETTING TOGGLE
 // =====================================================
@@ -961,22 +1776,21 @@ function SettingToggle({
     <div className="setting-toggle-row">
 
       <div>
-        <strong>{title}</strong>
 
-        <span>{description}</span>
+        <strong>
+          {title}
+        </strong>
+
+        <span>
+          {description}
+        </span>
+
       </div>
 
-      <label className="switch">
-
-        <input
-          type="checkbox"
-          checked={checked}
-          onChange={onChange}
-        />
-
-        <span className="slider"></span>
-
-      </label>
+      <Toggle
+        checked={checked}
+        onChange={onChange}
+      />
 
     </div>
   );
