@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
+import "../../styles/Dashboard.css";
 
 import { getDashboardStats } from "../../API/dashboardApi";
 
@@ -100,13 +101,13 @@ function Dashboard() {
   // =====================================================
 
   return (
-    <div style={styles.page}>
+    <div className="dashboard-page" style={styles.page}>
 
       {/* =================================================
           HEADER
       ================================================= */}
 
-      <div style={styles.header}>
+      <div className="dashboard-header" style={styles.header}>
 
         <div>
           <span style={styles.eyebrow}>
@@ -146,10 +147,10 @@ function Dashboard() {
           MAIN STATISTICS
       ================================================= */}
 
-      <div style={styles.cardGrid}>
+      <div className="dashboard-card-grid" style={styles.cardGrid}>
 
         <StatCard
-          icon="👥"
+          icon={"\u{1F465}"}
           title={t(
             "adminDashboard.totalCustomers",
             "Total Customers"
@@ -162,7 +163,7 @@ function Dashboard() {
         />
 
         <StatCard
-          icon="🏢"
+          icon={"\u{1F3E2}"}
           title={t(
             "adminDashboard.totalVendors",
             "Total Vendors"
@@ -175,7 +176,7 @@ function Dashboard() {
         />
 
         <StatCard
-          icon="🧾"
+          icon={"\u{1F9FE}"}
           title={t(
             "adminDashboard.totalInvoices",
             "Total Invoices"
@@ -188,7 +189,7 @@ function Dashboard() {
         />
 
         <StatCard
-          icon="💳"
+          icon={"\u{1F4B3}"}
           title={t(
             "adminDashboard.totalPayments",
             "Total Payments"
@@ -201,7 +202,7 @@ function Dashboard() {
         />
 
         <StatCard
-          icon="💰"
+          icon={"\u{1F4B0}"}
           title={t(
             "adminDashboard.totalSettlements",
             "Total Settlements"
@@ -214,7 +215,7 @@ function Dashboard() {
         />
 
         <StatCard
-          icon="⏳"
+          icon={"\u{23F3}"}
           title={t(
             "adminDashboard.pendingInvoices",
             "Pending Invoices"
@@ -227,7 +228,7 @@ function Dashboard() {
         />
 
         <StatCard
-          icon="✅"
+          icon={"\u{2705}"}
           title={t(
             "adminDashboard.completedSettlements",
             "Completed Settlements"
@@ -245,7 +246,7 @@ function Dashboard() {
           BUSINESS OVERVIEW
       ================================================= */}
 
-      <div style={styles.sectionCard}>
+      <div className="dashboard-section-card" style={styles.sectionCard}>
 
         <div style={styles.sectionHeader}>
 
@@ -337,7 +338,7 @@ function StatCard({
   description,
 }) {
   return (
-    <div style={styles.statCard}>
+    <div className="dashboard-stat-card" style={styles.statCard}>
 
       <div style={styles.iconBox}>
         {icon}
@@ -692,3 +693,4 @@ const styles = {
 };
 
 export default Dashboard;
+
