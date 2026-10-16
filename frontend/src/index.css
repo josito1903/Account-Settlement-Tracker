@@ -653,3 +653,38 @@ html[data-theme="dark"] .invoice-status.partial {
         transform: rotate(360deg);
     }
 }
+/* ACCENT COLOR SETTINGS */
+html[data-color="blue"] {
+  --accent: #2864e8;
+  --accent-hover: #2058d0;
+  --accent-light: #eef4ff;
+  --accent-border: #cddcff;
+}
+
+html[data-color="green"] {
+  --accent: #16a34a;
+  --accent-hover: #15803d;
+  --accent-light: #f0fdf4;
+  --accent-border: #bbf7d0;
+}
+
+html[data-color="purple"] {
+  --accent: #9333ea;
+  --accent-hover: #7e22ce;
+  --accent-light: #faf5ff;
+  --accent-border: #e9d5ff;
+}
+
+html[data-color="orange"] {
+  --accent: #ea580c;
+  --accent-hover: #c2410c;
+  --accent-light: #fff7ed;
+  --accent-border: #fed7aa;
+}
+
+html[data-color="red"] {
+  --accent: #dc2626;
+  --accent-hover: #b91c1c;
+  --accent-light: #fef2f2;
+  --accent-border: #fecaca;
+}

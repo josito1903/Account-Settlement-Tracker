@@ -11,6 +11,9 @@ import { AuthProvider } from "./context/AuthContext";
 // Initialize i18next before the application starts.
 import "./i18n";
 
+const savedAccentColor = localStorage.getItem("accentColor") || "blue";
+document.documentElement.setAttribute("data-color", savedAccentColor);
+
 ReactDOM.createRoot(
   document.getElementById("root")
 ).render(

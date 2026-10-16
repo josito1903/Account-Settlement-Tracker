@@ -76,7 +76,7 @@ function Customers() {
 
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "phone" ? value.replace(/\D/g, "") : value,
     }));
   };
 

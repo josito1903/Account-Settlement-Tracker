@@ -24,7 +24,7 @@ function Signup() {
 
     setForm((prev) => ({
       ...prev,
-      [name]: value,
+      [name]: name === "phoneNumber" ? value.replace(/\D/g, "") : value,
     }));
   };
 
